@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>登陆日志监控</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <script th:src="@{/bdcxt/js/jquery.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/bdcs/layui/css/layui.css}"  media="all"/>
+</head>
+<body>
+<div style="position: absolute;z-index: 1000001;margin-top: 15px;margin-left: 650px;">
+    <button class="layui-btn" id="export">
+        <i class="iconfont icon-export"></i> 导出excel
+    </button>
+</div>
+<table id="loginLog" lay-filter="loginLogfilter"></table>
+<script th:src="@{/bdcs/layui/layui.all.js}"></script>
+<!--<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
+        <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
+        <button class="layui-btn layui-btn-sm" lay-event="update">编辑</button>
+    </div>
+</script>-->
+<script>
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    layui.use('table', function(){
+        var table = layui.table;
+        var ins=table.render({
+            title: "登录日志报表",
+            elem: '#loginLog',
+            width: "100%",
+            url:ctxPath+ 'jkjg/loginLog',
+            toolbar:true,
+            response: {statusCode: 200},
+            page: true,
+            defaultToolbar:[],
+            limit: 10,
+            limits:[10,20,30,40],
+            cols: [
+                [
+                    {field: "ip", title: "ip",align:"center", width:300,rowspan:2},
+                    {field: "loginTime", align:"center", title: "登陆时间", width:350,rowspan:2} ,
+                    {field: "account", align:"center", title: "登陆账号", width:350,rowspan:2},
+                    {field: "createDate",align:"center",  title: "创建时间", width:350,rowspan:2}
+                    /*{fixed: 'right', width: 165, align:'center',title: "操作", toolbar: '#toolbarDemo'}*/
+                ]
+            ]
+        });
+        $("#export").click(function () {
+            $.ajax({
+                type: "get",
+                url: ctxPath+'jkjg/getAllLogData',
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == '200') {
+                        table.exportFile(ins.config.id, result.data, 'xls');
+                    } else {
+                        lay_win("导出失败，请重试！！！")
+                    }
+
+                },
+                error: function (errorMsg) {
+                    lay_win("导出失败，请重试！！！")
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

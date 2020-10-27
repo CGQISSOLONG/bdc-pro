@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>菜单管理</title>
+    <div th:replace="head"></div>
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini ">
+<div class="wrapper">
+    <div th:replace="header"></div>
+    <div th:replace="sidebar"></div>
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box box-info">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">
+                                <a th:href="@{/menu/list}"><span
+                                        class="glyphicon glyphicon-chevron-left"
+                                        title="返回"></span></a>
+                                菜单管理
+                            </h3>
+                        </div>
+                        <form class="form-horizontal" th:action="@{${api}}" method="post">
+                            <div class="box-body">
+                                <!--<div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-2 control-label">id</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="id" th:value="${menu}? ${menu.id}"
+                                               th:readonly="${menu}?true:false" class="form-control" id="inputEmail3"
+                                               placeholder=""
+                                               required="required" maxlength="50"/>
+                                    </div>
+                                </div>-->
+                                <div class="form-group">
+                                    <label for="inputEmail4" class="col-sm-2 control-label">菜单名称</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="label" th:value="${menu}? ${menu.label}"
+                                               class="form-control" id="inputEmail4" placeholder=""
+                                               required="required" maxlength="30"/>
+                                    </div>
+                                </div>
+                                <!--<div class="form-group">-->
+                                <!--<label for="inputEmail3" class="col-sm-2 control-label">类型</label>-->
+                                <!--<div class="col-sm-10">-->
+                                <!--<input type="text" name="type" class="form-control" id="inputEmail3" placeholder=""-->
+                                <!--required="required">-->
+                                <!--</div>-->
+                                <!--</div>-->
+                                <div class="form-group" th:if="${url}">
+                                    <label for="inputEmail5" class="col-sm-2 control-label">url</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="url" th:value="${menu}? ${menu.url}"
+                                               class="form-control" id="inputEmail5" placeholder=""
+                                               required="required" maxlength="225"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail6" class="col-sm-2 control-label">排序</label>
+
+                                    <div class="col-sm-10">
+                                        <input type="number" name="orderNum" th:value="${menu}? ${menu.orderNum} : 10"
+                                               class="form-control" id="inputEmail6" placeholder=""
+                                        />
+                                        <input type="hidden" name="parentIds"
+                                               th:value="${menu}? ${menu.parentIds} : (${parentPath} ? ${parentPath} :0)"/>
+                                        <input type="hidden" name="parentId"
+                                               th:value="${parentId}? ${parentId} : 0"/>
+
+                                    </div>
+                                </div>
+                                <br/><br/>
+                            </div>
+                            <div class="box-footer" style="text-align: center;">
+                                <button type="submit" class="btn btn-info">保存</button>
+                                <button type="button" class="btn btn-default" onclick="cancel()" style="margin-left: 25px;">取消</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!--<div th:replace="footer"></div>-->
+</div>
+<div th:replace="script"></div>
+<script>
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    function cancel() {
+        window.location.href=ctxPath+"/menu/list";
+    }
+</script>
+</body>
+</html>

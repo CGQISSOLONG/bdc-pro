@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdc.dao.HjfxDao">
+    <select id="getHjYzRateData" resultType="java.util.Map">
+          select name as qxdm,counts from (
+        select * from(
+        (   select h.name,h.qxdm as qxdms from area h
+        ) area)
+        left join
+        (
+        SELECT qxdm,
+        jrCount,
+        dbCount,
+        tjLogCount,
+        yjLogCount,
+        ROUND((jrCount / dbCount * tjLogCount / yjLogCount), 4) * 100 AS counts
+        from (
+            SELECT
+                GETAREANAME(qxdm) qxdm,
+                sum(BIZ_MSG_ID_NUMBER) as jrCount,
+                sum(REGISTER_NUMBER) AS dbCount,
+                COUNT(1) AS tjLogCount,
+                str_to_date(#{sj},'%Y-%m-%d')-DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY) + 1 AS yjLogCount
+            FROM T_HJPT_ACCESS_LOG_MX
+            WHERE  str_to_date(JRRQ,'%Y-%m-%d')>= DATE_SUB(#{sj},INTERVAL dayofyear(now())-1 DAY)
+             and str_to_date(JRRQ,'%Y-%m-%d') &lt;= str_to_date(#{sj}, '%Y-%m-%d')
+             and SFNRTJ=1
+              GROUP BY qxdm
+        ) as a
+        ) ave
+        on area.name=ave.qxdm
+        )as b
+    </select>
+
+
+
+    <select id="getWsqlData" resultType="java.util.Map">
+        select qxdm ,counts from (
+              select name as qxdm,wywlCount,ywlCount,round(wywlCount/ywlCount,4)*100 as counts  from (
+        select * from(
+        (       select h.name,h.qxdm as qxdms from area h
+        ) area)
+        left join
+        (
+           select * from(
+                     select qxdm as qx,getareaname(qxdm) qxdm,count('ywh') wywlCount  from t_hjpt_sjhj_mx t
+                     where t.ywh like '%W%'
+                     and t.bwjssj>= DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY)
+                      and date_format(t.bwjssj,'%Y-%m-%d') &lt;= #{sj,jdbcType=VARCHAR}
+                     group by qxdm
+             ) as c
+             )Wcounts on  Wcounts.qxdm = area.name
+
+             left join (
+              select qxdm as qxdmNames,getareaname(qxdm) qxd,count('ywh') ywlCount  from t_hjpt_sjhj_mx t
+                     where t.bwjssj>= DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY) and date_format(t.bwjssj,'%Y-%m-%d') &lt;= #{sj,jdbcType=VARCHAR}
+                     group by qxdm
+            ) Zcounts on Zcounts.qxdmNames = Wcounts.qx
+        ) as b
+        ) as a
+    </select>
+
+    <select id="getYsData" resultType="java.util.Map">
+               select name as qxdm,originalValue,totalTime as counts  from (
+
+        (  select h.name,h.qxdm as qxdms from area h
+        ) area
+        left join
+        (
+          select  qxdm ,qxdmName,totalTime, bdcdjCount,round(totalTime/bdcdjCount,4)*100 as originalValue
+            from (
+            select qxdm,getareaname(qxdm) qxdmName,round(sum(blys),2) as totalTime,count(biz_msg_id) bdcdjCount
+            from t_hjpt_sjhj_mx t
+            where t.bwjssj>=DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY) and date_format(t.bwjssj,'%Y-%m-%d')  &lt;= #{sj,jdbcType=VARCHAR}
+            group by qxdm
+            ) as b
+             )Wcounts on  Wcounts.qxdmName = area.name
+             )
+    </select>
+
+
+
+    <select id="getFormHjYzRateData" resultType="com.bdc.dao.dto.HjyzrateDto">
+        SELECT qxdm,
+         qxdmName,
+        jrCount,
+        dbCount,
+        tjLogCount,
+        yjLogCount,
+        ROUND((jrCount / dbCount * tjLogCount / yjLogCount), 4) * 100 AS evaluationScore,
+        ROUND((jrCount / dbCount * tjLogCount / yjLogCount), 4) * 100 AS originalValue
+        from (
+            SELECT
+                qxdm,
+                GETAREANAME(qxdm) AS qxdmName,
+                sum(BIZ_MSG_ID_NUMBER) as jrCount,
+                sum(REGISTER_NUMBER) AS dbCount,
+                COUNT(1) AS tjLogCount,
+               str_to_date(#{sj},'%Y-%m-%d') - DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY) + 1 AS yjLogCount
+            FROM T_HJPT_ACCESS_LOG_MX
+            WHERE str_to_date(JRRQ,'%Y-%m-%d')  >= DATE_SUB(#{sj},INTERVAL dayofyear(now())-1 DAY) and str_to_date(JRRQ,'%Y-%m-%d') &lt;= str_to_date(#{sj},'%Y-%m-%d')
+            and SFNRTJ=1 GROUP BY QXDM
+        ) as a
+        order by originalValue desc
+    </select>
+
+    <select id="getFormOnlineData" resultType="com.bdc.dao.dto.OnlineratioDto">
+       select qxdm,qxdmName,wywlCount,ywlCount,round(wywlCount/ywlCount,4)*100 as originalValue, round(wywlCount/ywlCount,4)*100 as evaluationScore from(
+              select * from(
+                     select qxdm,getareaname(qxdm) qxdmName ,count('ywh') wywlCount  from t_hjpt_sjhj_mx t
+                     where t.ywh like '%W%'
+                     and t.bwjssj>= DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY) and date_format(t.bwjssj,'%Y-%m-%d') &lt;= #{sj}
+                     group by qxdm
+             ) Wcounts
+             join(
+                     select qxdm as qxdms,getareaname(qxdm) qxdmNames ,count('ywh') ywlCount  from t_hjpt_sjhj_mx t
+                     where t.bwjssj>= DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY) and date_format(t.bwjssj,'%Y-%m-%d')  &lt;= #{sj,jdbcType=VARCHAR}
+                     group by qxdm
+            ) Zcounts on Zcounts.qxdms = Wcounts.qxdm
+            )as a
+            ORDER BY evaluationScore desc
+    </select>
+
+    <select id="getFormYsData" resultType="com.bdc.dao.dto.AverageTimeDto">
+            select  qxdm,qxdmName,totalTime, bdcdjCount,round(totalTime/bdcdjCount,4) as evaluationScore ,round(totalTime/bdcdjCount,4)*100 as originalValue,round(totalTime/bdcdjCount,4) as midUse
+            from (
+            select qxdm,getareaname(qxdm) qxdmName,sum(blys) as totalTime,count(biz_msg_id) bdcdjCount
+            from t_hjpt_sjhj_mx t
+             where t.bwjssj>= DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY) and date_format(t.bwjssj,'%Y-%m-%d')  &lt;= #{sj}
+            group by qxdm
+            )as a
+            order by evaluationScore
+    </select>
+
+    <select id="getYzlJcData" resultType="com.bdc.dao.dto.YzlJcSystemDto">
+        select
+        t.ID             as "id",
+        t.COMPARE_DATE   as "compareDate",
+        t.STATISTICS     as "statistics",
+        t.P_JR_COUNT     as "pdfJrCount",
+        t.P_JR_DB        as "pdfJrDb",
+        t.P_DB_COUNT     as "pdfDbCount",
+        t.JC_DB_JRCOUNT  as "jcDbJrcount",
+        t.JC_DB_LOGCOUNT as "jcDbLogcount",
+        t.ZS_JR_COUNT    as "zsJrCount",
+        t.ZS_JR_DBCOUNT  as "zsJrDbcount",
+        t.ZS_DB_COUNT    as "zsDbCount",
+        t.QXDM           as "qxdm"
+        from hj_yzl_jcsystem t
+        where t.qxdm=#{qxdm}  and  date_format(t.COMPARE_DATE,'%Y-%m-%d')=#{sj}
+        order by t.COMPARE_DATE
+    </select>
+
+
+    <select id="getFormYsTotalDataMx" resultType="com.bdc.dao.dto.HjfxMx">
+            select
+            id as xuhao,getareaname(qxdm) as qxdm,ywh,BIZ_MSG_ID AS bwId, djdl,slsj,dbsj,sfjsblsc,blys,remark,bwjssj
+            from t_hjpt_sjhj_mx t
+            where t.qxdm=#{qxdm} and t.bwjssj>=  DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY) and date_format(t.bwjssj,'%Y-%m-%d')  &lt;= #{sj}
+            order by bwjssj desc
+    </select>
+
+    <select id="getFormOnlineWebTotalDataMx" resultType="com.bdc.dao.dto.HjfxMx">
+            select
+             id as xuhao,getareaname(qxdm) as  qxdm,
+             ywh,
+             BIZ_MSG_ID AS bwId,
+             getDjlx(djdl) djdl,
+             slsj,dbsj,
+             sfjsblsc,
+             bwjssj
+            from t_hjpt_sjhj_mx t
+            where t.ywh like '%W%' and
+            t.qxdm=#{qxdm} and t.bwjssj>= DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY) and date_format(t.bwjssj,'%Y-%m-%d')  &lt;= #{sj}
+            order by bwjssj desc
+    </select>
+
+    <select id="getFormOnlineTotalDataMx" resultType="com.bdc.dao.dto.HjfxMx">
+            select
+            id as  xuhao,getareaname(qxdm) as qxdm ,
+            ywh,
+            BIZ_MSG_ID AS bwId,
+            getDjlx(djdl) djdl,
+            slsj,
+            dbsj,
+            sfjsblsc,
+            bwjssj
+            from t_hjpt_sjhj_mx t
+            where t.qxdm=#{qxdm} and t.bwjssj>=  DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY) and date_format(t.bwjssj,'%Y-%m-%d')  &lt;= #{sj,jdbcType=VARCHAR}
+            order by bwjssj desc
+    </select>
+
+    <select id="getBwjrMx" resultType="com.bdc.dao.dto.BwmxDto">
+        SELECT
+        id as  xuhao,
+        GETAREANAME(qxdm) AS qxdm,
+        BIZ_MSG_ID AS bwId,
+        REC_TYPE AS jrywbm,
+        getDjlx(djdl) DJDL,
+        YWH,
+        DBSJ,
+        BWJSSJ from  T_HJPT_SJHJ_MX WHERE qxdm = #{qxdm} AND BWJSSJ >=  DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY) AND date_format(BWJSSJ,'%Y-%m-%d')&lt;=#{sj}
+        order by bwjssj desc
+    </select>
+
+    <select id="getSjhjMxOther" resultType="com.bdc.dao.dto.SjhjMxOtherDto">
+        SELECT
+        id as xuhao,
+        GETAREANAME(qxdm) AS qxdm,
+        JRRQ,
+        BIZ_MSG_ID_NUMBER AS bwCount,
+        REGISTER_NUMBER AS rzdbl,
+        SFNRTJ,
+        REMARK
+        from T_HJPT_ACCESS_LOG_MX
+        WHERE qxdm = #{qxdm}
+        AND str_to_date(JRRQ,'%Y-%m-%d') >= DATE_SUB(CURDATE(),INTERVAL dayofyear(now())-1 DAY)
+        AND str_to_date(JRRQ,'%Y-%m-%d')  &lt;=  str_to_date(#{sj},'%Y-%m-%d')
+        order by JRRQ desc
+    </select>
+</mapper>

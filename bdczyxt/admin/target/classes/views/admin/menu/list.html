@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="head"></div>
+    <!-- DataTables -->
+    <link rel="stylesheet" th:href="@{/plugins/datatables/dataTables.bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{/layer/layui/css/layui.css}"/>
+    <script th:src="@{/layer/layui/layui.all.js}"></script>
+    <title>菜单管理</title>
+</head>
+    <script type="text/javascript">
+        function check() {
+            var r = confirm("确定要删除吗？");
+            if (r == true) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    </script>
+<body class="hold-transition skin-blue sidebar-mini ">
+<div class="wrapper">
+    <div th:replace="header"></div>
+    <div th:replace="sidebar"></div>
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <a th:href="@{/menu/form}" title="新增一级菜单"><span class="glyphicon glyphicon-plus"></span></a>
+                        </div>
+                        <div class="box-body">
+                            <table id="dataTable" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>id</th>
+                                    <th>菜单名称</th>
+                                    <th>url</th>
+                                    <th>排序</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="item:${list}">
+                                    <td th:text="${item.id}">id</td>
+                                    <td th:text="${item.label}">label</td>
+                                    <td th:text="${item.url}">url</td>
+                                    <td th:text="${item.orderNum}">order</td>
+                                    <td th:text="${item.disabled}==1 ? '禁用':'启用'" id="status">status</td>
+                                    <td style="text-align: center">
+                                        <span name="lock" title="切换状态"
+                                              th:data="@{/menu/{id}/togglestatus(disable=${item.disabled}=='1'? '0':'1',id=${item.id})}"
+                                              style="cursor: pointer" class="glyphicon glyphicon-lock"></span>
+                                        <a th:href="@{/menu/form(menuId=${item.id})}"><span class="glyphicon glyphicon-edit"
+                                                                                            title="修改"></span></a>
+                                        <span th:if="${item.id!=1 &&  item.parentId!=1}" name="trash" title="删除" th:data="@{/menu/{id}/delete(id=${item.id})}"
+                                              style="cursor: pointer" class="glyphicon glyphicon-trash"></span>
+                                        <a  th:if="${item.rank!=2}" th:href="@{/menu/form/(menuId=${item.parentIds}+','+${item.id},parent=true,parentId=${item.id})}">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!--<div th:replace="footer"></div>-->
+</div>
+
+<div th:replace="script"></div>
+
+<!-- page script -->
+<script th:src="@{/js/page_cn.js}"></script>
+<script th:src="@{/js/server-page.js}"></script>
+</body>
+</html>

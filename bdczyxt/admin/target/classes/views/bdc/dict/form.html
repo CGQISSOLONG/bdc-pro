@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>字典管理</title>
+    <div th:replace="head"></div>
+</head>
+<body class="hold-transition skin-blue sidebar-mini ">
+<div class="wrapper">
+    <div th:replace="header"></div>
+    <div th:replace="sidebar"></div>
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box box-info">
+                        <div class="box-header with-border">
+                            <!--<h3 class="box-title" th:text="${dict}?'字典修改':'字典新增'"></h3>-->
+                            <h3 class="box-title">
+                                <a th:href="@{/dict/list}"><span
+                                        class="glyphicon glyphicon-chevron-left"
+                                        title="返回"></span></a>
+                                字典管理
+                            </h3>
+                        </div>
+                        <form class="form-horizontal" th:action="@{${api}}" method="post">
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label for="value" class="col-sm-2 control-label">字典值</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="value" th:value="${dict}?${dict.value}"
+                                               class="form-control" id="value" placeholder=""
+                                               required="required" maxlength="30"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="label" class="col-sm-2 control-label">字典名</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="label" th:value="${dict}?${dict.label}"
+                                               class="form-control" id="label" placeholder=""
+                                               required="required" maxlength="20"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="type" class="col-sm-2 control-label">字典类型</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="type" th:value="${dict}?${dict.type}"
+                                               class="form-control" id="type" placeholder=""
+                                               required="required" maxlength="20"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="description" class="col-sm-2 control-label">描述</label>
+                                    <div class="col-sm-10">
+                                        <textarea type="text" name="description" th:value="${dict}?${dict.description}"
+                                                  class="form-control" id="description" placeholder="" th:text="${dict}?${dict.description}"
+                                                  required="required" maxlength="20"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="description" class="col-sm-2 control-label">备注</label>
+                                    <div class="col-sm-10">
+                                        <textarea type="text" name="remarks" th:value="${dict}?${dict.remarks}"
+                                                  class="form-control" id="remarks" placeholder="" th:text="${dict}?${dict.remarks}"
+                                                  required="required" maxlength="20"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail6" class="col-sm-2 control-label">排序</label>
+                                    <div class="col-sm-10">
+                                        <input type="number" name="sort" th:value="${dict}? ${dict.sort} : 10"
+                                               class="form-control" id="inputEmail6" placeholder=""
+                                        />
+                                    </div>
+                                </div>
+                                <br/><br/>
+                            </div>
+                            <div class="box-footer" style="text-align: center;">
+                                <button type="submit" class="btn btn-info">保存</button>
+                                <button type="button" class="btn btn-default" onclick="cancel()" style="margin-left: 25px;">取消</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!--<div th:replace="footer"></div>-->
+</div>
+<div th:replace="script"></div>
+<script>
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    function cancel() {
+        window.location.href=ctxPath+"/dict/list";
+    }
+</script>
+</body>
+</html>

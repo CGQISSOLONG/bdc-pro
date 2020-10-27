@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.admin.dao.primary.AdminRoleDao">
+
+    <select id="findRolesById" resultType="com.admin.entity.primary.AdminRole">
+        select *
+        from ADMIN_ROLE a
+                 join ADMIN_USER_ROLE b on a.id = b.roleid
+        where b.USERID = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <delete id="delete">
+        delete
+        from ADMIN_ROLE
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <select id="findAll" resultType="com.admin.entity.primary.AdminRole">
+            select * from admin_role
+    </select>
+
+    <update id="updateStateById" parameterType="com.admin.entity.primary.AdminRole">
+        update admin_role set status =#{param2} where id=#{param1}
+    </update>
+
+    <insert id="save"  parameterType="com.admin.entity.primary.AdminRole" useGeneratedKeys="true" keyProperty="id">
+        insert into admin_role(roleName,description,status,createtime,updatetime)
+        values(#{roleName},#{description},#{status},#{createTime},#{updateTime})
+    </insert>
+
+    <select id="findOne" resultType="com.admin.entity.primary.AdminRole">
+            select * from ADMIN_ROLE where id =#{roleId}
+    </select>
+</mapper>

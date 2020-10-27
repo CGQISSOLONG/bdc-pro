@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="head"></div>
+    <link rel="stylesheet" th:href="@{/plugins/datatables/dataTables.bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{/layer/layui/css/layui.css}"/>
+    <script th:src="@{/layer/layui/layui.all.js}"></script>
+    <title>登录用户日志</title>
+    <style type="text/css">
+        .table-striped
+        td {
+            text-align: center;
+        }
+
+        th {
+            text-align: center;
+        }
+    </style>
+</head>
+<script type="text/javascript">
+    function check() {
+        var r = confirm("确定要删除吗？");
+        if (r == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
+<body class="hold-transition skin-blue sidebar-mini ">
+<div class="wrapper">
+    <div th:replace="header"></div>
+    <div th:replace="sidebar"></div>
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-body">
+                            <div class="col-xs-6" style="float: right">
+                                <button class="btn btn-grey btn-lg" style="margin-right: 15px;float: right;" id="clearLog">
+                                    <i class="ace-icon fa fa-trash-o fa-1x icon-only"  th:title="清空"></i>
+                                </button>
+                               <!-- <label style="font-weight: normal;text-align: left;white-space: nowrap;">操作者 ：
+                                    <input class="" placeholder="请输入操作者" type="text" name="userName" id="userName">
+                                </label>
+                                <button class="" id="serchbtn">
+                                    <i class="fa fa-search">&nbsp;&nbsp;查&nbsp;&nbsp;询&nbsp;&nbsp;</i>
+                                </button>-->
+                            </div>
+                            <table id="dataTable" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>登录者</th>
+                                    <th>ip</th>
+                                    <th>时间</th>
+                                    <th>登录浏览器名</th>
+                                    <th>登录浏览器版本</th>
+                                    <th>删除</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!--<div th:replace="footer"></div>-->
+</div>
+
+<div th:replace="script"></div>
+
+<script>
+    $.ajaxSetup({headers: {'X-CSRF-TOKEN': $("#csrf_token").attr("content")}});
+    $(function () {
+        var ctxPath = '[[@{/}]]';
+        var table = $('#dataTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching": false,//自定义搜索
+            "language": {
+                "sProcessing": "加载中...",
+                "sLengthMenu": "显示 _MENU_ 项结果",
+                "sZeroRecords": "没有匹配结果",
+                "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                "sInfoPostFix": "",
+                "sSearch": "搜索:",
+                "sUrl": "",
+                "sEmptyTable": "暂无数据",
+                "sLoadingRecords": "载入中...",
+                "sInfoThousands": ",",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "末页"
+                }
+            },
+            "ajax": {
+                "url": "[[@{${api}}]]",
+                "type": "POST"
+            },
+            "columns": [
+                {"data": "account"},
+                {"data": "ip"},
+                {"data": "loginTime"},
+                {"data": "browserName"},
+                {"data": "browserVersion"},
+                {"data": null}
+            ],
+            "columnDefs": [{
+                "targets": 5,
+                "searchable": false,
+                "render": function (data, type, row, meta) {
+                    debugger;
+                    var id = data.id;
+                    return " <span name='trash' title='删除'  data='" + ctxPath + "hjpt/loginLog/" + id + "/delete'" +
+                        " style='cursor: pointer' class='glyphicon glyphicon-trash'></span>";
+                }
+            }]
+        });
+
+        function search() {
+            var userName = $("#account").val();
+            var param = {
+                "account": userName
+            };
+            table.settings()[0].ajax.data = param;
+            table.ajax.reload();
+
+        }
+
+        $("#serchbtn").click(function () {
+            search();
+        });
+
+        $("#clearLog").on('click',function () {
+            var r = confirm("确定要清空吗？");
+            if (r == true) {
+                $.ajax({
+                    type: "delete",
+                    url: "[[@{${apiDelete}}]]",
+                    success: function (data) {
+                        lay_win("清空成功");
+                        setTimeout(function () {
+                            window.location.reload();
+                        },2000);
+                    },
+                    error: function (data) {
+                        lay_win("清空失败,请重试！！！");
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<script th:src="@{/js/server-page.js}"></script>
+</body>
+</html>

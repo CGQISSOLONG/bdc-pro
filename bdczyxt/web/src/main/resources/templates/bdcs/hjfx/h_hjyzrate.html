@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <link rel="icon" th:href="@{/bdcs/images/logo_favicon.ico}"/>
+    <title>汇交分析-一致率</title>
+    <!-- layui core CSS -->
+    <link th:href="@{/bdcs/layui/css/layui.css}" rel="stylesheet"/>
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" th:href="@{/bdcs/css/iconfont.css}"/>
+    <link th:href="@{/bdcs/css/hjptdate.css}" rel="stylesheet"/>
+    <!-- 引入 ECharts 文件 -->
+    <script th:src="@{/bdcs/js/echarts.min.js}"></script>
+    <script th:src="@{/bdcxt/js/jquery.min.js}"></script>
+</head>
+<body class="hjpt_bg">
+<!-- header -->
+<header id="header">
+</header>
+<!-- 图表内容 -->
+<section id="chart_body">
+    <!-- 内容标题--图表切换 -->
+    <div class="chart_top">
+        <div th:include="bdcs/layout/nav2.html :: header_url"></div>
+    </div>
+    <!-- 可视化图表内容模块 -->
+    <div class="chart_center">
+        <!-- 中间-办件综合统计--柱状图 -->
+        <div class="chart_content">
+            <div id="HistChart" class="data_chart"></div>
+        </div>
+    </div>
+    <div class="chart_footer">
+        <!-- 选择阶段日期 -->
+        <div class="timecycle_box">
+            <!-- 上一个 -->
+            <div class="btn_box timeborder btn_pre">
+                <i class="iconfont icon-pre"></i>
+            </div>
+            <!-- 选择阶段日期 -->
+            <div class="time_box">
+                <ul class="time_ul">
+                   <!-- <li class="time_li timeborder" th:label="-1">
+                        <span class="time_a">上线</span>
+                        -
+                        <span class="time_b">至今</span>
+                    </li>-->
+                    <li th:class="${stat.first ? 'time_li timeborder active':'time_li timeborder'}"
+                        th:each="str,stat:${list}" th:label="${str}">
+                        <span class="time_a" th:text="${str}"></span>
+                    </li>
+                </ul>
+            </div>
+            <!-- 下一个 -->
+            <div class="btn_box timeborder btn_next">
+                <i class="iconfont icon-next"></i>
+            </div>
+
+        </div>
+    </div>
+</section>
+<input type="hidden" id="startDate" name="startDate"/>
+<input type="hidden" id="endDate" name="endDate"/>
+<input type="hidden" id="sj" name="sj"/>
+<footer class="pic_footer">
+    <span class="bg_decoration bg_decoration_l"></span>
+    <span class="bg_decoration bg_decoration_r"></span>
+</footer>
+<script type="text/javascript" th:src="@{/bdcs/layui/layui.all.js}"></script>
+<script type="text/javascript" th:src="@{/bdcs/js/hjpt.js}"></script>
+<script type="text/javascript" th:src="@{/bdcs/js/hjptchart_hjyzrate.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+
+    // layui前端框架
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        //日期范围
+        laydate.render({
+            elem: '#daterange',
+            //range: true,
+            done: function (value) {
+                /*if (value != null && value != '') {
+                    $("#startDate").val(dateToStringForLayui(date));
+                    $("#endDate").val(dateToStringForLayui(endDate));
+                }else {
+                    $("#startDate").val("");
+                    $("#endDate").val("");
+                }*/
+                if (value != null && value != '') {
+                    $("#sj").val(value);
+                }else {
+                    $("#sj").val("");
+                }
+                get_data(value);
+            }
+        });
+    });
+
+    function dateToStringForLayui(dateObj) {
+        var FullYear = dateObj.year;
+        var Month = dateObj.month;
+        var Day = dateObj.date;
+        var Hours = dateObj.hours;
+        var Minutes = dateObj.minutes;
+        var Seconds = dateObj.seconds;
+        return FullYear + "-" + Month + "-" + Day
+
+    }
+
+
+    /*$('.area_ul li').click(function () {
+     $(this).addClass('active').siblings().removeClass('active')
+     });*/
+
+   /* $('.regist_ul li').click(function () {
+        $(this).addClass('active').siblings().removeClass('active');
+        get_data();
+    });*/
+    $('.time_ul li').click(function () {
+        // 清除sj数据
+        $("#sj").val("");
+        $("#daterange").val("");
+        $(this).addClass('active').siblings().removeClass('active');
+        var sj = $(".time_ul .timeborder.active").attr("label");
+        get_data(sj);
+    });
+
+    /*$('.select_cycle span').click(function () {
+        $(this).addClass('active').siblings().removeClass('active');
+        get_data();
+    });*/
+    $(function () {
+        var sj = $(".time_ul .timeborder.active").attr("label");
+        get_data(sj);
+    });
+
+    function get_data(sj) {
+        // var djdl = $(".regist_ul .regist_li.active").attr("label");
+
+        // var startDate = $("#startDate").val();
+        // var endDate = $("#endDate").val();
+        //var period = $(".select_cycle .cycle_item.active").attr("label");
+        // var data = {"djdl": djdl, "sj": sj, "startDate": startDate, "endDate": endDate};
+        var data = {"sj": sj};
+        ajax_post(ctxPath + "hjfx/getHjYzRateData", data);
+    }
+
+    /*$('.chart_type li').click(function () {
+        $(this).addClass('active').siblings().removeClass('active');
+    });*/
+
+    $(".chart_icon_li").click(function () {
+        var active="[[${active}]]";
+        var sj = $(".time_ul .timeborder.active").attr("label");
+        //console.log($("#sj").value);
+        if("" != $("#sj").val()) {
+            sj = $("#sj").val();
+        }
+        if(active==1){
+            window.location.href=ctxPath+'hjyzrate?sj='+sj;
+        }else if(active==2){
+            window.location.href=ctxPath+'onlineratio?sj='+sj;
+        }else if(active==3){
+            window.location.href=ctxPath+'averageTime?sj='+sj;
+        }
+    });
+</script>
+</body>
+</html>

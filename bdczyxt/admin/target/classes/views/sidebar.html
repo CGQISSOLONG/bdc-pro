@@ -1,0 +1,24 @@
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu">
+            <li th:if="${not #lists.isEmpty(navs)}" th:class="(${parentId}==${nav.id})? 'treeview active':'treeview'"
+                th:each="nav:${navs}">
+                <a th:href="@{${nav.url}?:'javascript(0);'}">
+                    <span th:text="${nav.label}">label</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li th:name="${second.id}" th:data="${currentMenu}"
+                        th:class="(${second.id}==${currentMenu})?'active':''" th:each="second:${nav.childNodes}">
+                        <a  th:href="@{${second.url}(id=${second.id})}">
+                            <i class="fa fa-circle-o"></i>
+                            <span th:text="${second.label}">label</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+</aside>

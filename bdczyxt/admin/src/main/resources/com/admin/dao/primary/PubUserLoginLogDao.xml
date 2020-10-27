@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.admin.dao.primary.PubUserLoginLogDao">
+    <select id="findLogList" resultType="com.bdc.entity.primary.UserLoginLog">
+        select
+        id,
+        userid AS userId,
+        account,
+        logintime AS loginTime,
+        ip,
+        BROWSERNAME AS browserName,
+        BROWSERVERSION AS browserVersion
+        from user_loginlog
+        <where>
+            <if test="account != null and account != ''">
+                account=#{account}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteAll" parameterType="com.bdc.entity.primary.UserLoginLog">
+        delete from user_loginlog
+    </delete>
+
+    <delete id="delete" parameterType="integer">
+        delete from user_loginlog where id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="head"></div>
+    <link rel="stylesheet" th:href="@{/plugins/datatables/dataTables.bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{/layer/layui/css/layui.css}"/>
+    <script th:src="@{/layer/layui/layui.all.js}"></script>
+    <title>角色管理</title>
+</head>
+
+<script type="text/javascript">
+    function check() {
+        var r = confirm("确定要删除吗？");
+        if (r == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
+
+<body class="hold-transition skin-blue sidebar-mini ">
+<div class="wrapper">
+    <div th:replace="header"></div>
+    <div th:replace="sidebar"></div>
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <a th:href="@{/hjpt/role/form}" title="新增角色"><span class="glyphicon glyphicon-plus"></span></a>
+                        </div>
+                        <div class="box-body">
+                            <table id="dataTable" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>名称</th>
+                                    <th>描述</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="item:${list}">
+                                    <td th:text="${item.roleName}">名称</td>
+                                    <td th:text="${item.description}">url</td>
+                                    <td th:text="${item.state}==2 ? '禁用':'启用'" id="state">state</td>
+                                    <th style="text-align: center">
+                                       <span name="lock" title="切换状态"
+                                             th:data="@{/hjpt/role/{id}/togglestatus(status=${item.state}==1?2:1,id=${item.id})}"
+                                             style="cursor: pointer" class="glyphicon glyphicon-lock"></span>
+                                        <a th:href="@{/hjpt/role/form(roleId=${item.id})}"><span
+                                                class="glyphicon glyphicon-edit"
+                                                title="编辑"></span></a>
+                                        <span name="trash" title="删除" th:data="@{/hjpt/role/{id}/delete(id=${item.id})}"
+                                              style="cursor: pointer" class="glyphicon glyphicon-trash"></span>
+                                        <a th:href="@{/hjpt/role/{id}/select-menu(id=${item.id})}">
+                                            <span class="glyphicon glyphicon-tasks" title="分配菜单"
+                                                  style="cursor: pointer"></span></a></th>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+   <!-- <div th:replace="footer"></div>-->
+</div>
+
+<div th:replace="script"></div>
+<script th:src="@{/js/page_cn.js}"></script>
+<script th:src="@{/js/server-page.js}"></script>
+</body>
+</html>

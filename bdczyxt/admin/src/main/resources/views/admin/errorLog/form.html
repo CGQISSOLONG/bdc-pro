@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>异常日志详情表</title>
+    <div th:replace="head"></div>
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini ">
+<div class="wrapper">
+    <div th:replace="header"></div>
+    <div th:replace="sidebar"></div>
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box box-info">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">
+                                <a th:href="@{/errorLog/list}"><span
+                                        class="glyphicon glyphicon-chevron-left"
+                                        title="返回"></span></a>
+                                异常日志详情
+                            </h3>
+                        </div>
+                        <form class="form-horizontal" th:action="@{${api}}" method="post">
+                            <div>
+                            <div class="box-body">
+                                <div>
+                                    <label for="inputEmail4" class="col-sm-2 control-label">接口地址</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="className" th:value="${errorLog.interfaceUrl}"
+                                               class="form-control" id="inputEmail4" placeholder=""
+                                               required="required" maxlength="225"/>
+                                    </div>
+                                </div>
+                                <br/><br/>
+                                <div>
+                                    <label for="inputEmail5" class="col-sm-2 control-label">请求类型</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="className" th:value="${errorLog.methods}"
+                                               class="form-control" id="inputEmail5" placeholder=""
+                                               required="required" maxlength="225"/>
+                                    </div>
+                                </div>
+                                <br/><br/>
+                                <div>
+                                    <label for="inputEmail6" class="col-sm-2 control-label">执行参数</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="className" th:value="${errorLog.params}"
+                                               class="form-control" id="inputEmail6" placeholder=""
+                                               required="required" maxlength="225"/>
+                                    </div>
+                                </div>
+                                <br/><br/>
+                                <div>
+                                    <label for="inputEmail7" class="col-sm-2 control-label">返回code</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="errorCode" th:value="${errorLog.errorCode}"
+                                               class="form-control" id="inputEmail7" placeholder=""
+                                               required="required" maxlength="225"/>
+                                    </div>
+                                </div>
+                                <br/><br/>
+                                <div>
+                                    <label for="inputEmail8" class="col-sm-2 control-label">错误信息</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="errorMsg" th:value="${errorLog.errorMsg}"
+                                               class="form-control" id="inputEmail8" placeholder=""
+                                               required="required" maxlength="225" style="display:none"/>
+                                        <textarea name="errorMsg" id="textarea" cols="40" rows="4"  class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <br/><br/>
+                                <div>
+                                    <label for="inputEmail9" class="col-sm-2 control-label">类地址</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="className" th:value="${errorLog.className}"
+                                               class="form-control" id="inputEmail9" placeholder=""
+                                               required="required" maxlength="225"/>
+                                    </div>
+                                </div>
+                                <br/><br/>
+                            </div>
+                            <!--<div class="box-footer" style="text-align: center;">
+                                <button type="button" class="btn btn-default" onclick="cancel()" style="margin-left: 25px;">取消</button>
+                            </div>-->
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!--<div th:replace="footer"></div>-->
+</div>
+<div th:replace="script"></div>
+<script>
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    function cancel() {
+        window.location.href=ctxPath+"/errorLog/list";
+    }
+
+    var tObj = document.getElementById('textarea');
+    debugger;
+    var a = $("#inputEmail8").val();
+    tObj.value = $("#inputEmail8").val();
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.admin.dao.primary.AdminResourceDao">
+    <select id="findone" resultType="com.admin.entity.primary.AdminResource">
+        select * from admin_resource where code = #{code}
+    </select>
+
+    <select id="findAll" resultType="com.admin.entity.primary.AdminResource">
+        select * from admin_resource
+    </select>
+
+    <update id="modify" parameterType="com.admin.entity.primary.AdminResource"></update>
+    <insert id="save" parameterType="com.admin.entity.primary.AdminResource">
+--         insert into admin_resoource value
+    </insert>
+    <select id="getEnableResources" resultType="com.admin.entity.primary.AdminResource" >
+        select * from admin_resource
+    </select>
+</mapper>

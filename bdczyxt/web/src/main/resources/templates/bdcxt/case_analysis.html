@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8"/>
+		<title></title>
+		<link rel="stylesheet" type="text/css" th:href="@{/bdcxt/css/public.css}"/>
+		<link rel="stylesheet" type="text/css" th:href="@{/bdcxt/css/style.css}"/>
+	    <!--<link rel="stylesheet" type="text/css" href="css/style3.css"/>-->
+		<script th:src="@{/bdcxt/js/jquery.min.js}"></script>
+		<script th:src="@{/bdcxt/js/echarts.js}"></script>
+		<link rel="stylesheet" th:href="@{/bdcs/layui/css/layui.css}"/>
+		<script th:src="@{/bdcs/layui/layui.all.js}"></script>
+		<!-- Custom styles for this template -->
+		<link rel="stylesheet" th:href="@{/bdcs/css/iconfont.css}">
+		<style type="text/css">
+		.case-con{top: 0px;bottom: 0px;}
+		.figure-wrap{
+			height: 265px;}
+		.iconfont{
+			font-size: 25px;
+		}
+			.clock{
+				display: block;
+				float: left;
+				height: 16px;
+				line-height: 16px;
+				margin: 8px 10px 0px 8px;
+			}
+		</style>
+	</head>
+	<body>
+			<div class="case-con con" id="homePage">
+				
+				<div class="home-list clearfix" style="display: block;">
+						<div class="home-left">
+							<div class="home-l-top">
+								<div class="home-con-title"><span class="home-con-title-line"></span>上报总数据</div>
+                                <ul class="sjl-con clearfix">
+                                	<li class="">
+                                		<div class="sjl-item bg-color5">
+                                			<span>总上报量</span>
+                                		    <p id="zywl"></p>
+										</div>
+                                	</li>
+                                	<li>
+                                		<div class="sjl-item bg-color6">
+	                                		<span>抵押登记</span>
+											<p id="dyaywl"></p>
+                                		</div>
+                                	</li>
+                                	<li>
+                                		<div class="sjl-item bg-color7">
+	                                		<span>查封登记</span>
+											<p id="cfywl"></p>
+                                		</div>
+                                	</li>
+                                	<li>
+                                		<div class="sjl-item bg-color8">
+	                                		<span>注销登记</span>
+											<p id="zxywl"></p>
+                                		</div>
+                                	</li>
+                                </ul>
+							</div>
+							<div class="home-l-table">
+								<div class="home-con-title title-b">
+									<span class="home-con-title-line"></span>
+									各地区上报情况
+									<!--日期范围-->
+									<span style="cursor: pointer">
+
+									<li class="chart_icon_li" title="时间选择"  >
+										<span class="clock">请选择查询区间:</span>
+										<i class="iconfont icon-FormChart" id="date"></i>
+										<div></div>
+									</li>
+
+									<input type="hidden" id="startDate" name="startDate"/>
+									<input type="hidden" id="endDate" name="endDate"/>
+									</span>
+								</div>
+								<style type="text/css">
+									.main td{ height:45px; border:#CCCCCC 1px solid;}
+									.chart_icon_li {height: 30px;float:right;margin-left: auto}
+									.iconfont {height: 30px;margin-left: auto}
+								</style>
+								<table width="100%" border="0" cellspacing="0" cellpadding="0" id="task-table" class="task-table">
+			            			<tr>
+			            				<th class="b-left-none">行政区</th>
+			            				<th>总上报量</th>
+			            				<th>抵押登记</th>
+			            				<th>查封登记</th>
+										<th>预告登记</th>
+			            				<th>首次登记</th>
+										<th>转移登记</th>
+										<th>注销登记</th>
+			            			</tr>
+
+			            		</table>
+							</div>
+						</div>
+						<div class="home-right">
+							<div class="home-r-top">
+								<div class="home-con-title"><span class="home-con-title-line"></span>各地区上报量占比情况</div>
+                                <div class="figure-wrap" id="cwlzb">
+                                </div>
+							</div>
+
+							<div class="home-r-top">
+								<div class="home-con-title"><span class="home-con-title-line"></span>各地区上报量统计
+									<span  style="cursor: pointer" onclick="Mouth()">(按月</span>
+<!--									<span onclick="Week()">/按周</span>-->
+									<span style="cursor: pointer" onclick="Day()">/按天)</span>
+								</div>
+								<div class="figure-wrap" id="sbslfx" style="top:-10px">
+
+								</div>
+							</div>
+						</div>
+					</div>
+					</div>
+				
+			<!--	<div class="footer">copyrigh&copy;2019&nbsp;&nbsp;浙江臻善科技股份有限公司</div>-->
+	</body>
+	<!--<script src="js/index.js"></script>-->
+    <script th:src="@{/bdcxt/js/home_echart1.js}"></script>
+    <script th:src="@{/bdcxt/js/home_echart2.js}"></script>
+	<script th:src="@{/bdcs/js/common.js}"></script>
+    <script type="text/javascript">
+		/*<![CDATA[*/
+		ctxPath = /*[[@{/}]]*/ '';
+		/*]]>*/
+    	window.onresize = function(){
+			sbslfx.resize();
+			cwlzb.resize();
+			//sbslfx3.resize();
+			//cwlzb4.resize();
+		};
+		$(function () {
+			_ajax_get(ctxPath+'bdctj/getHjtjData',function (result) {
+				if(result.code==200){
+					var data = result.data;
+					$("#zywl").html(data.zywl);
+					$("#dyaywl").html(data.dyaywl);
+					$("#cfywl").html(data.cfywl);
+					$("#zxywl").html(data.zxywl);
+				}
+			});
+
+			_ajax_get(ctxPath+'bdctj/getHjtjQxData',function (result) {
+						if(result.code==200){
+							var data = result.data;
+
+							var json=[];
+							var legend=[0];
+
+							if(data.length>0){
+								for(var i=0;i<data.length;i++){
+
+									var tr=document.createElement("tr");
+									var td1=document.createElement("td");
+									var td2=document.createElement("td");
+									var td3=document.createElement("td");
+									var td4=document.createElement("td");
+									var td5=document.createElement("td");
+									var td6=document.createElement("td");
+									var td7=document.createElement("td");
+									var td8=document.createElement("td");
+									var table = document.getElementById("task-table");
+
+
+
+									if(data[i].qxdm==null){
+										data[i].qxdm="龙岩市";
+										td1.innerText=data[i].qxdm;
+									}else{td1.innerText=data[i].qxdm;}
+									if(data[i].counts==null){
+										data[i].counts="0";
+										td2.innerText=data[i].counts;
+									}else{	td2.innerText=data[i].counts;}
+									if(data[i].dyaq==null){
+										data[i].dyaq = "0";
+										td3.innerText=data[i].dyaq;
+									}else{td3.innerText=data[i].dyaq;}
+									if(data[i].cfdj==null){
+										data[i].cfdj="0";
+										td4.innerText=data[i].cfdj;
+									}else{td4.innerText=data[i].cfdj;}
+									if(data[i].ygdj==null){
+										data[i].ygdj="0";
+										td5.innerText=data[i].ygdj;
+									}else {td5.innerText=data[i].ygdj;}
+									if(data[i].scdj==null){
+										data[i].scdj="0";
+										td6.innerText=data[i].scdj;
+									}else {td6.innerText=data[i].scdj;}
+									if(data[i].zydj==null){
+										data[i].zydj="0";
+										td7.innerText=data[i].zydj;
+									}else {td7.innerText=data[i].zydj;}
+									if(data[i].zxdj==null){
+										data[i].zxdj="0";
+										td8.innerText=data[i].zxdj;
+									}else {td8.innerText=data[i].zxdj;}
+
+
+
+									tr.appendChild(td1);
+									tr.appendChild(td2);
+									tr.appendChild(td3);
+									tr.appendChild(td4);
+									tr.appendChild(td5);
+									tr.appendChild(td6);
+									tr.appendChild(td7);
+									tr.appendChild(td8);
+									table.appendChild(tr);
+
+
+								}
+								for(var j = 0;j<data.length;j++){
+
+									if(data[j].qxdm=="龙岩市"){
+										data.splice(0,1)
+									}
+									var jsonArray={"name":data[j].qxdm,"value":data[j].counts};
+									json.push(jsonArray);
+									legend.push(data[j].qxdm);
+								}
+								setdata(json,legend);
+							}
+						}
+					});
+
+			_ajax_get(ctxPath+'bdctj/countDataByWeek',function (result) {
+				if(result.code==200){
+					var data = result.data;
+					var echart=[];
+					var xAxis=[0];
+
+					if(data.length>0){
+						for(var i=0;i<data.length;i++){
+							var echartArray={"name":data[i].qxdm,"data":data[i].counts};
+							echart.push(echartArray);
+							xAxis.push(data[i].sj);
+
+						}
+						//setechart(echart,xAxis);
+					}
+				}
+			});
+
+			Mouth();
+
+
+			layui.use('laydate', function(){
+				var laydate = layui.laydate;
+				laydate.render({
+					elem: '#date',
+					range: true,
+					done: function (value, date, endDate) {
+						if (value != null && value != '') {
+							$("#startDate").val(dateToStringForLayui(date));
+							$("#endDate").val(dateToStringForLayui(endDate));
+						}else {
+							$("#startDate").val("");
+							$("#endDate").val("");
+						}
+						QxData(dateToStringForLayui(date), dateToStringForLayui(endDate));
+					}
+				});
+			});
+		});
+
+		function QxData(data1, data2) {
+			$.ajax({
+				type: "get",
+				url: ctxPath+'bdctj/getHjtjQxData',
+				//dataType: 'jsonp',
+				data: {
+					start:data1,
+					end:data2
+				},
+				success: function(result) {
+					if(result.code==200){
+							var data = result.data;
+						    $('#task-table td').remove();
+							var json=[];
+							var legend=[0];
+
+							if(data.length>0){
+								for(var i=0;i<data.length;i++){
+									var tr=document.createElement("tr");
+									var td1=document.createElement("td");
+									var td2=document.createElement("td");
+									var td3=document.createElement("td");
+									var td4=document.createElement("td");
+									var td5=document.createElement("td");
+									var td6=document.createElement("td");
+									var td7=document.createElement("td");
+									var td8=document.createElement("td");
+									var table = document.getElementById("task-table");
+
+									// var jsonArray={"name":data[i].qxdm,"value":data[i].counts};
+									// json.push(jsonArray);
+									// legend.push(data[i].qxdm);
+
+									if(data[i].qxdm==null){
+										data[i].qxdm="龙岩市";
+										td1.innerText=data[i].qxdm;
+									}else{td1.innerText=data[i].qxdm;}
+									if(data[i].counts==null){
+										data[i].counts="0";
+										td2.innerText=data[i].counts;
+									}else{	td2.innerText=data[i].counts;}
+									if(data[i].dyaq==null){
+										data[i].dyaq = "0";
+										td3.innerText=data[i].dyaq;
+									}else{td3.innerText=data[i].dyaq;}
+									if(data[i].cfdj==null){
+										data[i].cfdj="0";
+										td4.innerText=data[i].cfdj;
+									}else{td4.innerText=data[i].cfdj;}
+									if(data[i].ygdj==null){
+										data[i].ygdj="0";
+										td5.innerText=data[i].ygdj;
+									}else {td5.innerText=data[i].ygdj;}
+									if(data[i].scdj==null){
+										data[i].scdj="0";
+										td6.innerText=data[i].scdj;
+									}else {td6.innerText=data[i].scdj;}
+									if(data[i].zydj==null){
+										data[i].zydj="0";
+										td7.innerText=data[i].zydj;
+									}else {td7.innerText=data[i].zydj;}
+									if(data[i].zxdj==null){
+										data[i].zxdj="0";
+										td8.innerText=data[i].zxdj;
+									}else {td8.innerText=data[i].zxdj;}
+
+									tr.appendChild(td1);
+									tr.appendChild(td2);
+									tr.appendChild(td3);
+									tr.appendChild(td4);
+									tr.appendChild(td5);
+									tr.appendChild(td6);
+									tr.appendChild(td7);
+									tr.appendChild(td8);
+									table.appendChild(tr);
+
+								}
+								for(var j = 0;j<data.length;j++){
+									if(data[j].qxdm=="总数据"){
+										data.splice(0,1)
+									}
+									var jsonArray={"name":data[j].qxdm,"value":data[j].counts};
+									json.push(jsonArray);
+									legend.push(data[j].qxdm);
+								}
+								setdata(json,legend);
+
+							}
+						}
+
+				}
+			});
+		}
+
+		function dateToStringForLayui(dateObj) {
+			var FullYear = dateObj.year;
+			var Month = dateObj.month;
+			var Day = dateObj.date;
+			var Hours = dateObj.hours;
+			var Minutes = dateObj.minutes;
+			var Seconds = dateObj.seconds;
+			return FullYear + "-" + Month + "-" + Day
+		}
+
+		function Mouth(data1,data2,data3) {
+			$.ajax({
+				type: "get",
+				url: ctxPath+'bdctj/countDataByMouth',
+				data: {
+					min:data1,
+					max:data2,
+					interval:data3
+
+				},
+				success:function (result) {
+					debugger;
+					if(result.code==200){
+						var data = result.data;
+						var echart=[];
+						var xAxis=[];
+						var mouth=[];
+						var year=[];
+						var datas=[];
+						if(data.length>0){
+							var echartArray;
+							for(var i=0;i<data.length;i++){
+								if(data[i].counts==null){
+									data[i].counts="0";
+									echartArray=data[i].counts;
+								}else{
+									echartArray=data[i].counts;
+								}
+								echart.push(echartArray);
+								year=data[i].sj.substring(0,4)+"年";
+								mouth=data[i].sj.substring(5)+"月";
+								datas=year+mouth;
+								xAxis.push(datas);
+							}
+								setechart(data3,data1,data2,echart,xAxis);
+						}else{
+							setechart(10000,0,100000,echart,xAxis);
+						}
+					}
+				}
+			})
+
+
+
+
+		}
+
+		function Week() {
+			_ajax_get(ctxPath+'bdctj/countDataByWeeks',function (result) {
+				debugger;
+				if(result.code==200){
+					var data = result.data;
+					var echart=[];
+					var xAxis=[];
+					var mouth=[];
+					var day=[];
+					var datas=[];
+
+					if(data.length>0){
+						for(var i=0;i<data.length;i++){
+							var echartArray=data[i].counts;
+							echart.push(echartArray);
+							mouth=data[i].sj.substring(0,2)+"月";
+							day=data[i].sj.substring(3)+"日";
+							datas=mouth+day;
+							xAxis.push(datas);
+						}
+						setechart(echart[0],echart[echart.length-1],echart,xAxis);
+					}else{
+						setechart(0,100000,echart,xAxis);
+					}
+				}});
+		}
+
+		function Day(data1,data2,data3) {
+
+			$.ajax({
+				type: "get",
+				url: ctxPath+'bdctj/countDataByDays',
+				data: {
+					min:data1,
+					max:data2,
+					interval:data3
+				},
+				success:function (result) {
+					if(result.code==200){
+						var data = result.data;
+						var echart=[];
+						var xAxis=[];
+						var day=[];
+						var mouth=[];
+						var datas=[];
+
+						if(data.length>0){
+							for(var i=0;i<data.length;i++){
+								var echartArray;
+								if(data[i].counts==null){
+									data[i].counts="0";
+									echartArray=data[i].counts;
+								}else{
+									echartArray=data[i].counts;
+								}
+								echart.push(echartArray);
+								mouth=data[i].sj.substring(0,2)+"月";
+								day=data[i].sj.substring(3)+"日";
+								datas=mouth+day;
+								xAxis.push(datas);
+							}
+							setechart(data3,data1,data2,echart,xAxis);
+						}else{
+							setechart(10000,0,100000,echart,xAxis);
+						}
+					}
+				}
+
+		})
+			}
+    </script>
+</html>

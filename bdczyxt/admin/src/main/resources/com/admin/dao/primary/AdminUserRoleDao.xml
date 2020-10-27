@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.admin.dao.primary.AdminUserRoleDao">
+
+    <delete id="deleteByUserId">
+        delete
+        from ADMIN_USER_ROLE
+        where USER_ID = #{userId}
+    </delete>
+
+    <insert id="insertBatch" useGeneratedKeys="false">
+        INSERT INTO ADMIN_USER_ROLE
+        (
+        USERID,
+        ROLEID
+        )
+        <foreach item="item" index="index" collection="list" separator="union all">
+            select
+            #{userId},
+            #{item}
+            from dual
+        </foreach>
+    </insert>
+
+    <delete id="deleteByRoleId">
+        delete
+        from ADMIN_USER_ROLE
+        where ROLEID = #{id,jdbcType=BIGINT}
+    </delete>
+</mapper>

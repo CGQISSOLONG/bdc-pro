@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>系统异常</title>
+    <div th:replace="head"></div>
+    <div th:remove="all">
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+        <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
+        <link rel="stylesheet" th:href="@{/dist/third/font-awesome.min.css}"/>
+        <link rel="stylesheet" th:href="@{/dist/third/ionicons.min.css}"/>
+        <link rel="stylesheet" th:href="@{/dist/css/AdminLTE.min.css}"/>
+        <link rel="stylesheet" th:href="@{/dist/css/skins/_all-skins.min.css}"/>
+        <link rel="stylesheet" th:href="@{/plugins/iCheck/square/blue.css}"/>
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </div>
+</head>
+<body class="hold-transition skin-blue sidebar-mini ">
+<div class="wrapper">
+    <div th:replace="header"></div>
+    <div th:replace="sidebar"></div>
+    <div class="content-wrapper" style="text-align: center;color: brown;">
+        <div>
+            <span th:text="${msg}?${msg}:'系统异常'" style="font-size: 2.75rem;"></span><br/>
+            <span th:text="${errorInfo}?${errorInfo}:'请联系管理员'"  style="font-size: 2.75rem;"></span>
+        </div>
+    </div>
+    <!--<div th:replace="footer"></div>-->
+</div>
+
+<div th:replace="script"></div>
+<div th:remove="all">
+    <script th:src="@{/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+    <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/plugins/fastclick/fastclick.js}"></script>
+    <script th:src="@{/dist/js/app.min.js}"></script>
+    <script th:src="@{/plugins/sparkline/jquery.sparkline.min.js}"></script>
+    <script th:src="@{/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+    <script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/plugins/datatables/dataTables.bootstrap.min.js}"></script>
+</div>
+</body>
+</html>

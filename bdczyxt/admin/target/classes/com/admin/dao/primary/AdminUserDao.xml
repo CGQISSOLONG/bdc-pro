@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.admin.dao.primary.AdminUserDao">
+    <delete id="delete">
+        delete
+        from ADMIN_USER
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="create">
+        insert into ADMIN_USER() value
+    </insert>
+
+
+    <update id="grantRole">
+
+<!--        void grantRole(Long userId, List<Integer> roleIds);-->
+    </update>
+
+
+
+    <select id="selectRoles" resultType="com.admin.controller.admin.vo.SelectRoleVo" >
+
+            select * from admin_user where userid = #{userId}
+    </select>
+
+
+    <select id="list" resultType="com.admin.entity.primary.AdminUser">
+        select * from admin_user
+    </select>
+
+
+    <update id="modify">
+--         void modify(AdminUser user);
+    </update>
+
+
+
+    <update id="updateStatusById">
+        update admin_user set status =#{param2} where id=#{param1}
+    </update>
+
+
+    <select id="findUserByAccount" resultType="com.admin.entity.primary.AdminUser">
+        select * from admin_user where account=#{username}
+    </select>
+
+
+
+    <select id="findUserByEmail" resultType="com.admin.entity.primary.AdminUser">
+        select * from admin_user where email=#{email}
+    </select>
+
+    <select id="findUserByUserTypeNotAndIdNot" resultType="com.admin.entity.primary.AdminUser">
+        select * from admin_user where userType=#{arg0} and id=#{arg1}
+    </select>
+
+    <select id="findOne" resultType="com.admin.entity.primary.AdminUser">
+        select * from admin_user where id=#{adminUserId}
+    </select>
+
+
+
+    <update id="update">
+--         update  * @param password
+--     * @param email
+--     * @param date
+--     * @param id
+    </update>
+
+    <insert id="save" parameterType="com.admin.entity.primary.AdminUser" useGeneratedKeys="true" keyProperty="id">
+        insert into admin_user(password,email,account,username,createtime,userType,status)
+        values (#{password},#{email},#{account},#{username},#{createTime},#{userType},#{status})
+    </insert>
+</mapper>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="head"></div>
+    <link rel="stylesheet" th:href="@{/plugins/datatables/dataTables.bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{/layer/layui/css/layui.css}"/>
+    <script th:src="@{/layer/layui/layui.all.js}"></script>
+    <title>用户管理</title>
+</head>
+<script type="text/javascript">
+    function check() {
+        var r = confirm("确定要删除吗？");
+        if (r == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function checkPassword() {
+        var r = confirm("确定要将密码重置为初始密码吗？");
+        if (r == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
+
+<body class="hold-transition skin-blue sidebar-mini ">
+<div class="wrapper">
+    <div th:replace="header"></div>
+    <div th:replace="sidebar"></div>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <a th:href="@{/user/form}" title="新增帐号"><span class="glyphicon glyphicon-plus"></span></a>
+                        </div>
+                        <div class="box-body">
+                            <table id="dataTable" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>帐号名</th>
+                                    <th>邮箱</th>
+                                    <th>状态</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="item:${list}">
+                                    <td th:text="${item.account}"></td>
+                                    <td th:text="${item.email}">label</td>
+                                    <td th:text="${item.status}==2 ?'禁用':'启用'" id="status">status</td>
+                                    <td th:text="${#dates.format(item.createTime,'yyyy/MM/dd HH:mm')}">url</td>
+                                    <td>
+                                         <span name="lock" title="切换状态"
+                                               th:data="@{/user/{id}/togglestatus(status=${item.status}==1 ? 2:1,id=${item.id})}"
+                                               style="cursor: pointer" class="glyphicon glyphicon-lock">
+                                        </span>
+                                        <a th:href="@{/user/form(adminUserId=${item.id})}" style="margin-left: 5px;"><span class="glyphicon glyphicon-edit"
+                                                                                                 title="修改"></span>
+                                        </a>
+                                        <a
+                                                th:href="@{/user/{id}/select-role(id=${item.id})}"><span
+                                                style="cursor: pointer;margin-left: 5px;" class="glyphicon glyphicon-transfer"
+                                                title="分配角色"></span></a>
+                                       <span name="trash" title="删除" th:data="@{/user/{id}/delete(id=${item.id})}"
+                                                style="cursor: pointer;margin-left: 5px;" class="glyphicon glyphicon-trash">
+                                        </span>
+                                         <span name="rePassword" title="重置密码" th:data="@{/user/{id}/rePassword(id=${item.id})}"
+                                                style="cursor: pointer;margin-left: 5px;" class="glyphicon glyphicon-repeat">
+                                        </span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+   <!-- <div th:replace="footer"></div>-->
+</div>
+
+<div th:replace="script"></div>
+
+<!-- page script -->
+<script th:src="@{/js/page_cn.js}"></script>
+<script th:src="@{/js/server-page.js}"></script>
+</body>
+</html>

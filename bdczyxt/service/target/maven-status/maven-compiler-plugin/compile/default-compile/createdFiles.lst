@@ -1,0 +1,7 @@
+com\bdc\service\MenuService.class
+com\bdc\service\UserMenuService.class
+com\bdc\service\RoleMenuService.class
+com\bdc\service\BdctjService.class
+com\bdc\service\UserRoleService.class
+com\bdc\service\UserService.class
+com\bdc\service\RoleService.class

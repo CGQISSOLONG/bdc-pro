@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html   xmlns:th="http://www.thymeleaf.org">
+    <script type="text/javascript"  th:inline="javascript">
+
+
+    </script>
+<body>
+
+    <div th:fragment="header_url">
+        <div class="chart_t_c">
+            <h4 class="chart_title">不动产办件综合统计</h4>
+            <div class="chart_date" th:if="${active==2}">
+                <div class="dateicon_box">
+                    <span class="icon_date_l icon_date"></span>
+                </div>
+                <div class="layui-form date_select">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="daterange" placeholder=" 日期范围 ">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dateicon_box">
+                    <span class="icon_date_r icon_date"></span>
+                </div>
+            </div>
+        </div>
+        <div class="chart_t_r">
+            <ul class="chart_type">
+                <!-- 地图 -->
+<!--                <li  th:class="${active==1 ? 'chart_icon_li active':'chart_icon_li'}"  title="地图" onclick="javascript:window.location.href=ctxPath+'map'">-->
+<!--                    <i class="iconfont icon-MapChart"></i>-->
+<!--                </li>-->
+                <!-- 柱状图 -->
+                <li th:class="${active==2 ? 'chart_icon_li active':'chart_icon_li'}" title="柱状图" onclick="javascript:window.location.href=ctxPath+'histogram'">
+                    <i class="iconfont icon-HistChart"></i>
+                </li>
+                <!-- 折线图 -->
+                <li th:class="${active==3 ? 'chart_icon_li active':'chart_icon_li'}" title="折线图" onclick="javascript:window.location.href=ctxPath+'brokenline'">
+                    <i class="iconfont icon-LineChart"></i>
+                </li>
+                <!-- 饼状图 -->
+                <li th:class="${active==4 ? 'chart_icon_li active':'chart_icon_li'}" title="饼状图" onclick="javascript:window.location.href=ctxPath+'cakeshape'">
+                    <i class="iconfont icon-PieChart"></i>
+                </li>
+                 <!--数据表格 -->
+                <!--<li th:if="${active==5}" class="chart_icon_li active" title="数据表格" onclick="javascript:window.location.href=ctxPath+'onlineratio'">
+                    <i class="iconfont icon-FormChart"></i>
+                </li>-->
+                <!--&lt;!&ndash; 表格下载 &ndash;&gt;-->
+                <!--<li class="chart_icon_li" style="display: none;" title="表格下载">-->
+                    <!--<i class="iconfont icon-biaogexiazai"></i>-->
+                <!--</li>-->
+            </ul>
+        </div>
+    </div>
+
+
+    <div th:fragment="time">
+
+
+    </div>
+</body>
+</html>

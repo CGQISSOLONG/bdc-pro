@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <link rel="icon" th:href="@{/bdcs/images/logo_favicon.ico}">
+    <title></title>
+    <!-- layui core CSS -->
+    <link th:href="@{/bdcs/layui/css/layui.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" th:href="@{/bdcs/css/iconfont.css}">
+    <link th:href="@{/bdcs/css/hjpt.css}" rel="stylesheet">
+    <!-- 引入 ECharts 文件 -->
+    <script th:src="@{/bdcs/js/echarts.min.js}"></script>
+    <script th:src="@{/bdcxt/js/jquery.min.js}"></script>
+</head>
+<body class="hjpt_bg">
+<!-- header -->
+<header id="header">
+</header>
+<!-- 图表内容 -->
+<section id="chart_body">
+    <!-- 内容标题--图表切换 -->
+    <div class="chart_top">
+                <div th:include="bdcs/layout/nav.html :: header_url"></div>
+                    </div>
+                    <!-- 可视化图表内容模块 -->
+                    <div class="chart_center">
+                    <!-- 左侧-地区选择 -->
+                    <div class="slide_box slide_left">
+                    <ul class="area_ul">
+                    <li th:if="${not #lists.isEmpty(list)}" th:label="${area.qxdm}" th:class="${areaStat.index==0? 'area_li active':'area_li'}" th:each="area,areaStat:${list}">
+                    <i class="iconfont icon-zhishi_1"></i>[[${area.name}]]
+                    </li>
+                    </ul>
+                    </div>
+                    <!-- 中间-办件综合统计--柱状图 -->
+                    <div class="chart_content">
+                    <div id="HistChart" class="data_chart"></div>
+                    </div>
+                    <!-- 右侧-登记类型选择 -->
+                    <div class="slide_box slide_right">
+
+                    <ul class="regist_ul">
+                    <li class="regist_li active">
+                    <i class="iconfont icon-zhishi_3"></i>
+                不&nbsp;&nbsp;&nbsp;限
+                </li>
+                <li class="regist_li" th:label="100">
+                    <i class="iconfont icon-zhishi_3"></i>首次登记
+                    </li>
+                    <li class="regist_li" th:label="200">
+                    <i class="iconfont icon-zhishi_3"></i>转移登记
+                    </li>
+                    <li class="regist_li" th:label="300">
+                    <i class="iconfont icon-zhishi_3"></i>变更登记
+                    </li>
+                    <li class="regist_li" th:label="500">
+                    <i class="iconfont icon-zhishi_3"></i>更正登记
+                    </li>
+                    <li class="regist_li" th:label="400">
+                    <i class="iconfont icon-zhishi_3"></i>注销登记
+                    </li>
+                    <li class="regist_li" th:label="700">
+                    <i class="iconfont icon-zhishi_3"></i>预告登记
+                    </li>
+                    <li class="regist_li" th:label="600">
+                    <i class="iconfont icon-zhishi_3"></i>异议登记
+                    </li>
+                    <li class="regist_li" th:label="800">
+                    <i class="iconfont icon-zhishi_3"></i>查封登记
+                    </li>
+                    <li class="regist_li" th:label="900">
+                    <i class="iconfont icon-zhishi_3"></i>抵押登记
+                    </li>
+                    <li class="regist_li" th:label="1000">
+                    <i class="iconfont icon-zhishi_3"></i>限制登记
+                    </li>
+                    <li class="regist_li" th:label="2000">
+                    <i class="iconfont icon-zhishi_3"></i>地役权登记
+                    </li>
+                    </ul>
+                    </div>
+                    </div>
+                    <div class="chart_footer">
+                    <!-- 选择周期 -->
+                    <!--   <div class="chart_date cycle_box">
+                    <div class="dateicon_box">
+                    <span class="icon_date_l icon_date"></span>
+                    </div>
+                    <div class="select_cycle">
+                    <span class="cycle_item cycle_week" th:label="1">周</span>
+                    <span class="cycle_item cycle_month active" th:label="2">月</span>
+                    <span class="cycle_item cycle_year" th:label="3">年</span>
+                    </div>
+                    <div class="dateicon_box">
+                    <span class="icon_date_r icon_date"></span>
+                    </div>
+                    </div>-->
+                    <!-- 选择阶段日期 -->
+                    <div class="timecycle_box">
+                    <!-- 上一个 -->
+                    <div class="btn_box timeborder btn_pre">
+                    <i class="iconfont icon-pre"></i>
+                    </div>
+                    <!-- 选择阶段日期 -->
+                    <div class="time_box">
+                    <ul class="time_ul">
+                    <li class="time_li timeborder" th:label="-1">
+                    <span class="time_a">上线</span>
+                    -
+                    <span class="time_b">至今</span>
+                    </li>
+
+                    <li th:class="${i==0 ? 'time_li timeborder active':'time_li timeborder'}"
+                th:each="i,stat:${#numbers.sequence(0, nums)}" th:label="${year-i}">
+                    <span class="time_a" th:text="${year-i}+'年'"></span>
+                    -
+                    <span class="time_b">至今</span>
+                    </li>
+                    </ul>
+                    </div>
+                    <!-- 下一个 -->
+                    <div class="btn_box timeborder btn_next">
+                    <i class="iconfont icon-next"></i>
+                    </div>
+
+                    </div>
+                    </div>
+                    </section>
+                    <input type="hidden" id="startDate" name="startDate"/>
+                    <input type="hidden" id="endDate" name="endDate"/>
+                    <footer class="pic_footer">
+                    <span class="bg_decoration bg_decoration_l"></span>
+                    <span class="bg_decoration bg_decoration_r"></span>
+                    </footer>
+                    <script type="text/javascript" th:src="@{/ly/dist/layui/layui.all.js}"></script>
+<script type="text/javascript" th:src="@{/bdcs/js/hjpt.js}"></script>
+<script type="text/javascript" th:src="@{/bdcs/js/hjptchart.js}"></script>
+<script type="text/javascript" th:src="@{/bdcs/js/common.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+
+    // layui前端框架
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        //日期范围
+        laydate.render({
+            elem: '#daterange',
+            range: true,
+            done: function (value, date, endDate) {
+                if (value != null && value != '') {
+                    $("#startDate").val(dateToStringForLayui(date));
+                    $("#endDate").val(dateToStringForLayui(endDate));
+                }else {
+                    $("#startDate").val("");
+                    $("#endDate").val("");
+                }
+                get_data();
+            }
+        });
+    });
+
+    function dateToStringForLayui(dateObj) {
+        var FullYear = dateObj.year;
+        var Month = dateObj.month;
+        var Day = dateObj.date;
+        var Hours = dateObj.hours;
+        var Minutes = dateObj.minutes;
+        var Seconds = dateObj.seconds;
+        return FullYear + "-" + Month + "-" + Day
+
+    }
+
+
+    $('.area_ul li').click(function () {
+     $(this).addClass('active').siblings().removeClass('active')
+     });
+
+    $('.regist_ul li').click(function () {
+        $(this).addClass('active').siblings().removeClass('active');
+        get_data();
+    });
+    $('.time_ul li').click(function () {
+        $(this).addClass('active').siblings().removeClass('active');
+        get_data();
+    });
+
+    $('.select_cycle span').click(function () {
+        $(this).addClass('active').siblings().removeClass('active');
+        get_data();
+    });
+
+    get_data();
+
+    function get_data() {
+        var djdl = $(".regist_ul .regist_li.active").attr("label");
+        var sj = $(".time_ul .timeborder.active").attr("label");
+        var startDate = $("#startDate").val();
+        var endDate = $("#endDate").val();
+        //var period = $(".select_cycle .cycle_item.active").attr("label");
+        var data = {"djdl": djdl, "sj": sj, "startDate": startDate, "endDate": endDate};
+        ajax_post(ctxPath + "bjfx/getHistogramData", data);
+    }
+
+    $('.chart_type li').click(function () {
+        $(this).addClass('active').siblings().removeClass('active');
+    });
+
+
+
+
+</script>
+</body>
+</html>

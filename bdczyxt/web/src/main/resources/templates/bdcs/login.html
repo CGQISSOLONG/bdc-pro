@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <link rel="icon" th:href="@{/bdcs/images/logo_favicon.ico}"/>
+	<title>欢迎登录不动产系统</title>
+
+    <!-- layui core CSS -->
+    <link th:href="@{/bdcs/layui/css/layui.css}" rel="stylesheet"/>
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" th:href="@{/bdcs/css/iconfont.css}"/>
+    <link th:href="@{/bdcs/css/login.css}" rel="stylesheet"/>
+
+</head>
+<style>
+    .logins{
+        margin-left: -230px;
+    }
+</style>
+<script th:src="@{/bdcxt/js/jquery.min.js}" type="text/javascript" charset="utf-8"></script>
+<body class="login_bg">
+	<div class="loginbody">
+
+        <section class="login_content logins">
+            <!-- 右侧登录模块 -->
+            <div class="content_right fr">
+                <div class="form_title">
+                    <img th:src="@{/bdcs/images/logo_favicon.ico}" alt="logo" class="login_logo"/>
+                </div>
+                <div class="form_title">
+                    <h3 class="form_name">欢迎使用——不“栋”管家
+                        <i class="iconfont icon-goahead"></i>
+                    </h3>
+                </div>
+                <div class="form_subtitle">
+                    <hr class="form_line_d"/>
+                    <p class="subtitle_p">不“栋”管家，您的贴心管家</p>
+                    <hr class="form_line_c"/>
+                </div>
+                <!-- 登录输入框 -->
+                <div class="form_login">
+                    <div class="layui-form">
+                        <!-- 输入用户名 -->
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <i class="iconfont icon-User"></i>
+                                <input type="text" name="account" id="account" lay-verify="title" autocomplete="off" placeholder="输入用户名" class="layui-input"/>
+                            </div>
+                        </div>
+                        <!-- 请输入密码 -->
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <i class="iconfont icon-mima"></i>
+                                <input type="password" name="password" id="password" placeholder="请输入密码" autocomplete="off" class="layui-input"/>
+                            </div>
+                        </div>
+                        <!-- 登录 -->
+                        <div class="layui-form-item btn_login">
+                            <div class="layui-input-block">
+                                <button class="layui-btn layui-input" onclick="login()">
+                                    登&nbsp;&nbsp;录
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cls"></div>
+        </section>
+    </div>
+</body>
+
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    // ctxPath = /*[[@{/}]]*/ 'bdczyxt/';
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    // $(".login-check").on("click", function () {
+    //     $(this).find(".block").toggle();
+    //     $(this).find(".none").toggle();
+    // });
+    function login() {
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: ctxPath+"user/login",
+            data: {
+                account: $("#account").val(),
+                password: $("#password").val(),
+                //validateCode: $("#validateCode").val()
+                browserName: getBrowser().appname,
+                browserVersion: getBrowser().version
+            },
+            success: function (result) {
+                //成功
+                if (result.code == "200") {
+                    window.location.href = ctxPath + "index";
+                    //window.location.href = "/index";
+                   // alert("1123456")
+                } else {
+                    alert(result.msg);
+                }
+            },
+            error: function (result) {
+            }
+        });
+    }
+    function getBrowser(){
+        var browser = {
+                msie: false,
+                firefox: false,
+                opera: false,
+                safari: false,
+                chrome: false,
+                netscape: false,
+                appname: 'unknown',
+                version: 0
+            },
+            ua = window.navigator.userAgent.toLowerCase();
+        if (/(msie|firefox|opera|chrome|netscape)\D+(\d[\d.]*)/.test(ua)) {
+            browser[RegExp.$1] = true;
+            browser.appname = RegExp.$1;
+            browser.version = RegExp.$2;
+        } else if (/version\D+(\d[\d.]*).*safari/.test(ua)) {
+            // safari
+            browser.safari = true;
+            browser.appname = 'safari';
+            browser.version = RegExp.$2;
+        }
+        return browser;
+    }
+</script>
+</html>

@@ -1,0 +1,14 @@
+com\bdc\controller\indexController.class
+com\bdc\controller\UserController.class
+com\bdc\util\RoleAndPermUtils.class
+com\bdc\conponment\shiro\ShiroConfig.class
+com\bdc\conponment\shiro\SwaggerConfig.class
+com\bdc\conponment\shiro\JWTToken.class
+com\bdc\conponment\shiro\PrimaryRealm.class
+com\bdc\controller\req\UserReq$UserReqBuilder.class
+com\bdc\conponment\shiro\JWTFilter.class
+com\bdc\interceptors\WebInterceptorAdapter.class
+com\bdc\conponment\shiro\JkptCommandLineRunner.class
+com\bdc\controller\req\UserReq.class
+com\bdc\util\ThreadLocalUtil.class
+com\bdc\BdcApplication.class

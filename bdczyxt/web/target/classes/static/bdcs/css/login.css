@@ -1,0 +1,311 @@
+/* 登录页 */
+* {
+	padding: 0;
+	margin: 0;
+}
+
+.fl {
+	float: left;
+}
+
+.fr {
+	float: left;
+}
+
+.cls {
+	clear: both;
+}
+
+*, *:after, *:before {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+ul, li {
+	list-style: none;
+}
+
+button, input, select, textarea {
+	font-family: inherit;
+	font-size: 100%;
+	margin: 0
+}
+
+button, input {
+	line-height: normal
+}
+
+button, select {
+	text-transform: none
+}
+
+button, html input[type=button], input[type=reset], input[type=submit] {
+	-webkit-appearance: button;
+	cursor: pointer
+}
+
+button[disabled], html input[disabled] {
+	cursor: default
+}
+button::-moz-focus-inner, input::-moz-focus-inner {
+	border: 0;
+	padding: 0
+}
+
+/* 隐藏滚动条 */
+::-webkit-scrollbar {
+	display: none;
+}
+
+/* 背景图 */
+.login_bg {
+	min-width: 1360px;
+	margin: 0px;
+	background-image: url('../images/timg.jpg');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	background-attachment: fixed;
+}
+
+
+.loginbody {
+	width: 940px;
+	margin: 40px auto;
+}
+
+/* 窗口宽度>1440,设计宽度=1920 */
+@media screen and (min-width:1440px) {
+	.login_bg {
+		/*background-image: url('../images/login_bg_l.png');*/
+	}
+
+	.loginbody {
+		margin: 120px auto;
+	}
+}
+
+/*项目标题*/
+.loginbody .login_title {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+}
+
+.loginbody .login_title .title_left {
+	margin-right: 12px;
+	width: 60px;
+	height: 59px;
+	border-radius: 50%;
+	box-shadow:2px 3px 4px 0px rgba(58,80,243,0.48);
+}
+
+.loginbody .login_title .title_left .login_logo {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	object-fit: cover;
+}
+
+.login_title .title_right .title_name {
+	margin-top: -8px;
+	font-size:36px;
+	font-family: "思源宋体";
+	font-weight: bold;
+	color:#000509;
+	text-shadow:2px 3px 4px rgba(58,80,243,0.48);	
+}
+
+.login_title .title_right .title_en {
+	padding-left: 5px;
+	letter-spacing: 2px;
+	font-size:14px;
+	font-family:Microsoft YaHei;
+	font-weight:500;
+	color:rgba(58,80,243,1);
+	text-shadow:0px 2px 4px rgba(12,28,97,0.5);
+}
+
+.login_content {
+	width: 100%;
+}
+
+.content_left {
+	margin-top: 22px;
+	width: 662px;
+	margin-right: 30px;
+}
+
+.content_left .module_top, .content_left .module_bottom {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+	margin-top: 10px;
+}
+
+.content_left .module_item {
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+/*右侧登录模块*/
+.content_right {
+	width:250px;
+	height:460px;
+	padding:50px 24px;
+	/*background:rgba(58,80,243,0.5);*/
+	background:rgba(14,0,0,0.5);
+	border-radius:0px 32px 0px 0px;
+	color: #fbfbfb;
+	/* css input文字颜色设置*/
+	--color-primary: #eee;
+}
+
+/* 窗口宽度>1440,设计宽度=1920 */
+@media screen and (min-width:1440px) {
+	.content_left {
+		margin-top: 62px;
+	}
+
+	.content_right {		
+		height:500px;
+	}
+}
+.form_title .form_name {
+	font-size: 24px;
+	margin-bottom: 2px;
+}
+
+.form_title .form_name .icon-goahead {
+	display: inline-block;
+	font-size: 22px;
+	margin-left: 10px;	
+	animation: myfirst .8s ease infinite 80ms alternate;
+	-moz-animation: myfirst .8s ease infinite 80ms alternate;/* Firefox: */
+	-webkit-animation: myfirst .8s ease infinite 80ms alternate;/* Safari 和 Chrome: */
+	-o-animation: myfirst .8s ease infinite 80ms alternate;/* Opera: */
+}
+
+@keyframes myfirst{
+	from{-webkit-transform:translate(10px,0);transform:translate(10px,0);}
+	to{-webkit-transform:translate(-10px,0);transform:translate(-10px,0);}
+}
+@-moz-keyframes myfirst/* Firefox: */{
+	from{-webkit-transform:translate(8px,0);transform:translate(8px,0)}
+	to{-webkit-transform:translate(-8px,0);transform:translate(-8px,0)}
+}
+@-webkit-keyframes myfirst/* Safari 和 Chrome: */{
+	from{-webkit-transform:translate(8px,0);transform:translate(8px,0)}
+	to{-webkit-transform:translate(-8px,0);transform:translate(-8px,0)}
+}
+@-o-keyframes myfirst/* Opera: */{
+	from{-webkit-transform:translate(8px,0);transform:translate(8px,0);}
+	to{-webkit-transform:translate(-8px,0);transform:translate(-8px,0);}
+}
+.form_title .form_en {	
+	font-size:10px;
+	font-family:Arial;
+}
+
+.content_right .form_subtitle {
+	margin-top: 44px;
+	margin-bottom: 80px;
+}
+
+.form_subtitle .form_line_d {
+	opacity: 0.5;
+	width: 20px;
+}
+
+.form_subtitle .form_line_c {
+	opacity: 0.8;
+	width: 80px;
+}
+
+/*登录输入框*/
+.form_login .layui-form-item {
+	position: relative;
+}
+
+.form_login .layui-input-block {
+	margin-left: 0;
+}
+
+.form_login .layui-input-block .iconfont {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	color: rgba(255,255,255,0.7);
+}
+
+.form_login .layui-input-block .layui-input {
+	border:none;
+	background-color: transparent;
+	padding-left: 32px;
+	border: 1px solid rgba(255,255,255,0.5);
+	color: var(--color-primary);
+}
+
+.form_login .layui-input-block .layui-input:focus {
+	border-color: rgba(255,255,255,1) !important;
+}
+
+.form_login .layui-input::-webkit-input-placeholder{   
+    /* WebKit browsers */   
+    color: #ebebeb;   
+}   
+.form_login .layui-input:-moz-placeholder {   
+    /* Mozilla Firefox 4 to 18 */   
+    color: #ebebeb;   
+}   
+.form_login .layui-input::-moz-placeholder {   
+    /* Mozilla Firefox 19+ */   
+    color: #ebebeb;   
+}   
+.form_login .layui-input:-ms-input-placeholder {   
+    /* Internet Explorer 10+ */   
+    color: #ebebeb;   
+}
+
+/*登录按钮*/
+.form_login .btn_login {
+	margin-top: 30px;
+	position: relative;
+}
+
+.form_login .btn_login .layui-input-block .layui-input{
+	padding:0;
+	font-size: 16px;
+}
+
+.btn_login .layui-input-block button:hover {
+	background: #fff;
+	color: rgba(58,80,243,1);
+	opacity: 1;
+}
+
+.footer {
+	opacity: 0.7;
+	width: 940px;
+	font-size: 12px;
+	position: absolute;
+	font-weight: 300;
+	bottom: 5px;
+	left: 50%;
+	margin-left: -470px;
+	text-align: center;
+	color: #fff;
+}
+
+
+/* 窗口宽度>1440,设计宽度=1920 */
+@media screen and (min-width:1440px) {
+	.footer {		
+		bottom: 20px;
+	}
+}
+/*设置登录按钮点击效果*/

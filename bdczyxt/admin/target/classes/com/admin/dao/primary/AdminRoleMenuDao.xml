@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.admin.dao.primary.AdminRoleMenuDao">
+    <insert id="insertBatch" useGeneratedKeys="false">
+        INSERT INTO ADMIN_ROLEMENU
+        (
+        ROLEID,
+        MENUID
+        )
+        <foreach item="item" index="index" collection="list" separator="union all">
+            select
+            #{roleId},
+            #{item}
+            from dual
+        </foreach>
+    </insert>
+
+    <delete id="delete">
+        delete
+        from TADMIN_ROLEMENU
+        where ROLEID = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteByRoleId">
+        delete
+        from ADMIN_ROLEMENU
+        where ROLEID = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteByMenuId">
+        delete
+        from ADMIN_ROLEMENU
+        where MENUID = #{id,jdbcType=BIGINT}
+    </delete>
+</mapper>

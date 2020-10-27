@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>平均用时-一般不动产登记总用时明细</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <script th:src="@{/bdcxt/js/jquery.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/bdcs/layui/css/layui.css}"  media="all"/>
+</head>
+<style>
+    .layui-table-tool-self {
+        left: 17px
+    }
+     .layui-table,.layui-table-view{margin:0px 0}
+
+</style>
+<body>
+<div style="position: absolute;z-index: 1000001;margin-top: 15px;margin-left: 1090px;">
+    <button class="layui-btn" id="export">
+        <i class="iconfont icon-export"></i> 导出excel
+    </button>
+</div>
+
+<table id="getFormOnlineWebTotalDataMx" lay-filter="getFormOnlineWebTotalDataMxfilter"></table>
+<script th:src="@{/bdcs/layui/layui.all.js}"></script>
+<!--<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
+        <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
+        <button class="layui-btn layui-btn-sm" lay-event="update">编辑</button>
+    </div>
+</script>-->
+<script>
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    layui.use('table', function(){
+        var table = layui.table;
+        var ins=table.render({
+            title: "网上申请比例-累计外网办结量",
+            elem: '#getFormOnlineWebTotalDataMx',
+            width: "100%",
+            url:ctxPath+ 'hjfx/getFormOnlineWebTotalDataMx?sj=[[${sj}]]&qxdm=[[${qxdm}]]',
+            toolbar:true,
+            method:"post",
+            response: {statusCode: 200},
+            page: true,
+            defaultToolbar: [{
+                title: '返回',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-left'
+            }],
+            limit: 10,
+            limits:[10,20,30,40],
+            cols: [
+                [
+                    {field:'xuhao', width:80, title: '序号',fixed: 'left',align:"center"},
+                    {field: "qxdm", title: "行政区",align:"center", width:150,rowspan:2},
+                    {field: "ywh", align:"center", title: "业务号", width:200,rowspan:2} ,
+                    {field: "bwId", align:"center", title: "报文ID", width:200,rowspan:2,templet:function (d) {
+                            return d.bwId + '\t';
+                        }},
+                    {field: "djdl",align:"center",  title: "登记大类", width:200,rowspan:2},
+                    {field: "slsj",align:"center",  title: "受理时间", width:200,rowspan:2},
+                    {field: "dbsj",align:"center",  title: "登簿时间", width:200,rowspan:2},
+                    {field: "sfjsblsc",align:"center",  title: "是否计算办理时长", width:200,rowspan:2,templet: function (d) {
+                            if(d.sfjsblsc == 1) {
+                                return '是';
+                            } else {
+                                return '否';
+                            }
+                        }},
+                    {field: "bwjssj",align:"center",  title: "报文接收时间", width:200,rowspan:2}
+
+                    /*{fixed: 'right', width: 165, align:'center',title: "操作", toolbar: '#toolbarDemo'}*/
+                ]
+            ]
+        });
+
+        $("#export").click(function () {
+            $.ajax({
+                type: "get",
+                url: ctxPath+'hjfx/getFormOnlineWebTotalDataMxAll?sj=[[${sj}]]&qxdm=[[${qxdm}]]',
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == '200') {
+                        table.exportFile(ins.config.id, result.data, 'xls');
+                    } else {
+                        lay_win("导出失败，请重试！！！")
+                    }
+
+                },
+                error: function (errorMsg) {
+                    lay_win("导出失败，请重试！！！")
+                }
+            });
+        });
+
+        //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('toolbar(getFormOnlineWebTotalDataMxfilter)', function (obj) {
+            //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var layEvent = obj.event;
+            if (layEvent === 'LAYTABLE_TIPS') {
+                //layer.alert('Hi，头部工具栏扩展的右侧图标。');
+                window.location.href = ctxPath + 'onlineratio?sj=[[${sj}]]';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

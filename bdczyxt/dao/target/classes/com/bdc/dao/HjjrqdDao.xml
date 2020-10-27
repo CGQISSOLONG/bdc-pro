@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdc.dao.HjjrqdDao">
+
+    <select id="getHjjrqdData" resultType="com.bdc.dao.dto.HjjrqdDto">
+        SELECT ywh,
+        c.label djxl,
+        zllb,
+        qllxmc,
+        tjfl,
+        GETDJLX(djlx) djlx,
+        GETAREANAME(qxdm) qxdm,
+        dbsj,
+        slsj,
+    --    a.label qszt,
+        zydjzl,
+       -- b.label qlrlb,
+        crsj,
+        (select label FROM dict t  WHERE t.type ='DYBDCLX' and t.value = (SELECT CASE WHEN LENGTH(s.bdclx)=1 THEN s.bdclx else  SUBSTR(s.bdclx, 3) END FROM dual)) bdclx
+        FROM MV_TJ_SLSXYB s
+        left join dict c on c.value = s.djxl and c.type ='DJXL'
+      --  left join dict a on a.value = s.qszt and a.type ='QSZT'
+       -- left join dict b on b.value = s.qlrlb and b.type ='QLRLB'
+        <where>
+            <if test="ywh != null and ywh != ''">
+                and ywh like '%'||#{ywh}||'%'
+            </if>
+            <if test="djlx != null and djlx != ''">
+                and djlx=#{djlx}
+            </if>
+            <if test="qllx != null and qllx != ''">
+                and qllxmc like '%'||#{qllx}||'%'
+            </if>
+            <if test="qxdm != null and qxdm != ''">
+                and qxdm=#{qxdm}
+            </if>
+            <if test="tjfl != null and tjfl != ''">
+                and tjfl=#{tjfl,jdbcType=VARCHAR}
+            </if>
+            <if test="start != null and start != ''">
+                AND slsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and slsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+</mapper>

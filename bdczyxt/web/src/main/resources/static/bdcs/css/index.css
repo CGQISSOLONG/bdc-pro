@@ -1,0 +1,256 @@
+/*不动产汇聚平台-首页*/
+@font-face {
+	font-family: "BW7tiScientificCondensed";
+	src: url("../fonts/BW7tiScientificCondensed.ttf");
+}
+
+.module_body {
+	position: absolute;
+	top: 50%;
+	margin-top: -200px;
+	left: 50%;
+	margin-left: -510px;
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+	width: 1020px;
+	height: 445px;
+}
+
+/*设置模块边框/背景样式*/
+.module_border {
+	color: #fff;
+	text-align: center;
+	position: relative;
+	background: rgba(255, 255, 255, 0);
+	border: 1px solid rgba(45, 93, 203, 1);
+	border-radius: 4px;
+	-webkit-transition: all .35s;
+	transition: all .35s;
+	-webkit-box-shadow: 0 0 36px  rgba(0, 102, 255, .48) inset;
+	box-shadow: 0 0 36px  rgba(0, 102, 255, .48) inset;
+	cursor: pointer;
+}
+
+.module_border:hover {
+	border-radius: 0;
+	border: 1px solid #00aaff;
+	-webkit-box-shadow: 0 0 72px  rgba(0, 102, 255, .8) inset;
+	box-shadow: 0 0 72px  rgba(0, 102, 255, .8) inset;
+}
+
+.module_border:after {
+	content: '';
+	position: absolute;
+	background-image: url(../images/moduel_light.png);
+	background-repeat: no-repeat;
+	background-size: 85% 70%;
+	width: 200px;
+	height: 26px;
+	top: -10px;
+	left: -10px;
+	opacity: 0;
+	z-index: 99;
+	-webkit-transition: all .35s;
+	transition: all .35s;
+	-webkit-transform: translate(-30px, 0)
+}
+
+.module_border:hover:after {
+	top: -10px;
+	opacity: 1;
+	-webkit-transform: translate(10px, 0)
+}
+
+.module_border:before {
+	content: '';
+	position: absolute;
+	background-image: url(../images/moduel_light.png);
+	background-repeat: no-repeat;
+	background-size: 80% 60%;
+	width: 200px;
+	height: 26px;
+	bottom: -19px;
+	right: -30px;
+	opacity: 0;
+	z-index: 99;
+	-webkit-transition: all .35s;
+	transition: all .35s;
+	-webkit-transform: translate(20px, 0)
+}
+
+.module_border:hover:before {
+	bottom: -19px;
+	opacity: 1;
+	-webkit-transform: translate(0, 0)
+}
+
+.module_left {
+	width: 180px;
+	height: 445px;
+}
+
+/*日期时间*/
+.module_left .module_time {
+	width: 180px;
+	height: 250px;
+	padding: 30px 0;
+	margin-bottom: 10px;
+	text-align: center;
+	color: #ffffff;
+}
+
+.module_time .diszTime {
+	font-size: 48px;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	letter-spacing: 5px;
+	font-family: 'BW7tiScientificCondensed';
+}
+
+.module_time .dateTime {
+	font-size: 12px;
+	letter-spacing: 1px;
+	font-weight: 300;
+}
+
+.module_border .iconfont {
+	display: inline-block;
+}
+
+/*汇聚入库分析*/
+.module_left .module_rkfx {
+	width: 180px;
+	height: 185px;
+}
+
+.module_border .icon-shujuruku {
+	font-size: 64px;
+	margin: 40px auto 20px;
+}
+
+.module_border .module_name {
+	font-size: 16px;
+	font-weight: 400;
+}
+
+.module_center {
+	width: 665px;
+	height: 445px;
+	margin: 0 10px;
+}
+
+.module_center .module_center_top {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+	margin-bottom: 10px;
+}
+
+/*首页主图*/
+.module_center_top .module_main {
+	width: 500px;
+	height: 315px;
+	margin-right: 10px;
+	padding: 10px;
+}
+
+/*不动产查询分析*/
+.module_center_top .module_cxfx {
+	width: 155px;
+	height: 315px;
+}
+
+.module_border .icon-bdccxfx {
+	font-size: 44px;
+	margin: 40px auto 20px;
+}
+
+.module_cxfx .module_name {
+	line-height: 24px;
+}
+
+.module_center .module_center_bottom {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+}
+
+/*决策分析系统*/
+.module_center_bottom .module_jcfx {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+	width: 325px;
+	height: 120px;
+	margin-right: 10px;
+	padding: 35px 60px;
+}
+
+.module_border .icon_left .icon-juecefenxi {
+	font-size: 44px;
+	margin-right: 24px;
+}
+
+.module_border .text_right {
+	text-align: left;
+}
+
+.module_border .text_right .module_name {
+	letter-spacing: 4px;
+	margin-bottom: 6px;
+}
+
+.module_border .text_right .module_name_en {
+	font-size: 10px;
+	color: rgba(130, 170, 250, 0.5);
+	letter-spacing: 1px;
+}
+
+/*数据汇交*/
+.module_center_bottom .module_sjhj {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+	width: 325px;
+	height: 120px;
+	padding: 35px 80px;
+}
+
+.module_border .icon_left .icon-shujuhuijiao {
+	font-size: 44px;
+	margin-right: 24px;
+}
+
+.module_right {
+	width: 145px;
+	height: 445px;
+}
+
+/*信息共享平台*/
+.module_right .module_xxgx {
+	width: 155px;
+	height: 155px;
+	margin-bottom: 10px;
+}
+
+.module_border .icon-xinxigongxiang {
+	font-size: 56px;
+	margin: 30px auto 15px;
+}
+
+/*外网办件查询*/
+.module_right .module_wwbj {
+	width: 155px;
+	height: 280px;
+}
+
+.module_border .icon-banjianchaxun {
+	font-size: 44px;
+	margin: 40px auto 20px;
+}

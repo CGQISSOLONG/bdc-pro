@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>数据汇交一致率其他明细页面</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <script th:src="@{/bdcxt/js/jquery.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/bdcs/layui/css/layui.css}"  media="all"/>
+</head>
+<style>
+    .layui-table-tool-self {
+        position: absolute;
+        left: 5px;
+        top: 10px;
+        float: left;
+    }
+
+     .layui-table,.layui-table-view{margin:0px 0}
+
+</style>
+<body>
+<div style="position: absolute;z-index: 1000001;margin-top: 15px;margin-left: 1130px;">
+    <button class="layui-btn" id="export">
+        <i class="iconfont icon-export"></i> 导出excel
+    </button>
+</div>
+<table id="bwjrlOther_mx" lay-filter="sjhjOtherMxfilter"></table>
+<script th:src="@{/bdcs/layui/layui.all.js}"></script>
+<script type="text/html" id="xuhao">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    layui.use('table', function(){
+        var table = layui.table;
+        var ins=table.render({
+            title: "数据汇交一致率-登簿日志明细",
+            elem: '#bwjrlOther_mx',
+            width: "100%",
+            url:ctxPath+ 'hjfx/getSjhjMxOther?sj=[[${sj}]]&qxdm=[[${qxdm}]]',
+            method:'post',
+            toolbar:true,
+            response: {statusCode: 200},
+            page: true,
+            defaultToolbar: [{
+                title: '返回',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-left'
+            }],
+            limit: 10,
+            limits:[10,20,30,40],
+            cols: [
+                [
+                    {field:'xuhao',align:"center", width:80, title: '序号',fixed: 'left'},
+                    {field: "qxdm",align:"center", title: "行政区划代码",align:"center", width:150,rowspan:2},
+                    {field: "jrrq", align:"center", title: "接入日期", width:200,rowspan:2} ,
+                    {field: "bwCount", align:"center", title: "当天登薄的报文接入量", width:200,rowspan:2},
+                    {field: "rzdbl",align:"center",  title: "登簿日志中的登薄量", width:200,rowspan:2},
+                    {field: "sfnrtj", align:"center", title: "是否纳入统计", width:200,rowspan:2,templet: function (d) {
+                            if(d.sfnrtj === '1') {
+                                return '是';
+                            } else {
+                                return '否';
+                            }
+                        }
+                    },
+                    {field: "remark", align:"center", title: "说明", width:315,rowspan:2}
+                    /*{fixed: 'right', width: 165, align:'center',title: "操作", toolbar: '#toolbarDemo'}*/
+                ]
+            ]
+        });
+        $("#export").click(function () {
+            $.ajax({
+                type: "get",
+                url: ctxPath+'hjfx/geSjhjOtherMxAll?sj=[[${sj}]]&qxdm=[[${qxdm}]]',
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == '200') {
+                        table.exportFile(ins.config.id, result.data, 'xls');
+                    } else {
+                        lay_win("导出失败，请重试！！！")
+                    }
+
+                },
+                error: function (errorMsg) {
+                    lay_win("导出失败，请重试！！！")
+                }
+            });
+        });
+
+        //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('toolbar(sjhjOtherMxfilter)', function (obj) {
+            //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var layEvent = obj.event;
+            if (layEvent === 'LAYTABLE_TIPS') {
+                //layer.alert('Hi，头部工具栏扩展的右侧图标。');
+                window.location.href = ctxPath + 'hjyzrate?sj=[[${sj}]]';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

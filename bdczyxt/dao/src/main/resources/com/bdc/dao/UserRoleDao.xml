@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdc.dao.UserRoleDao" >
+    <select id="findbyusername" resultType="com.bdc.entity.UserRole">
+        select * from user_role
+    </select>
+    <select id="findByExample" resultType="com.bdc.entity.UserRole"></select>
+    <select id="findById" resultType="com.bdc.entity.UserRole">
+        select * from user where id = #{userId}
+    </select>
+    <select id="findAlls" resultType="com.bdc.entity.UserRole">
+        select * from user
+    </select>
+    <select id="findList" resultType="com.bdc.entity.UserRole">
+        select * from user
+    </select>
+    <delete id="delete" parameterType="com.bdc.entity.UserRole"></delete>
+    <insert id="save" parameterType="com.bdc.entity.UserRole"></insert>
+
+    <delete id="deleteByUserId" parameterType="com.bdc.entity.UserRole">
+            delete
+        from USER_ROLE
+        where USERID = #{userId}
+    </delete>
+
+    <delete id="deleteByRoleId">
+        DELETE FROM USER_ROLE where ROLEID= #{id}
+    </delete>
+
+    <insert id="insertBatch" useGeneratedKeys="false">
+<!--        INSERT INTO USER_ROLE-->
+<!--        (-->
+<!--        ID,-->
+<!--        USER_ID,-->
+<!--        ROLE_ID,-->
+<!--        CREATE_TIME-->
+<!--        )SELECT SEQ_USER_ROLE.NEXTVAL,tt.* FROM (-->
+<!--        <foreach item="item" index="index" collection="list" separator="union">-->
+<!--            select-->
+<!--            #{userId},-->
+<!--            #{item},-->
+<!--            CURRENT_TIMESTAMP-->
+<!--            from dual-->
+<!--        </foreach>-->
+<!--        ) tt-->
+    </insert>
+</mapper>

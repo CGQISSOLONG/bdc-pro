@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdc.dao.LoginLogDao">
+    <select id="findAll" resultType="com.bdc.entity.primary.UserLoginLog">
+        select * from user_loginlog
+    </select>
+
+    <select id="findAlls" resultType="com.bdc.entity.primary.UserLoginLog">
+            select * from user_loginlog order by logintime desc
+    </select>
+
+    <insert id="save" parameterType="com.bdc.entity.primary.UserLoginLog" useGeneratedKeys="true" keyProperty="id">
+        insert into user_loginlog(ip,logintime,userid,account,createtime,browsername,browserversion) values (
+        #{ip},#{loginTime},#{userId},#{account},#{createDate},#{browserName},#{browserVersion}
+        )
+    </insert>
+</mapper>

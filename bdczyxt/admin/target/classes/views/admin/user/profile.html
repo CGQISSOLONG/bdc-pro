@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>个人信息</title>
+    <div th:replace="head"></div>
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini ">
+<div class="wrapper">
+    <div th:replace="header"></div>
+    <div th:replace="sidebar"></div>
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box box-info">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">个人信息</h3>
+                        </div>
+                        <form class="form-horizontal" id="form_id" th:action="@{/user/modify-profile}" method="post">
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label for="password" class="col-sm-2 control-label">原始密码</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" name="password" th:readonly="readonly"
+                                               class="form-control" id="password" placeholder=""
+                                               maxlength="20" th:value="${user.password}"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newPassword" class="col-sm-2 control-label">新密码</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" name="newPassword" required="required"
+                                               class="form-control" id="newPassword" placeholder="请输入新密码"
+                                               maxlength="20"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmNewPassword" class="col-sm-2 control-label">确认新密码</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" name="confirmNewPassword"
+                                               class="form-control" id="confirmNewPassword" placeholder="确认新密码"
+                                               required="required" maxlength="20"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email" class="col-sm-2 control-label">邮箱</label>
+                                    <div class="col-sm-10">
+                                        <input type="email" name="email" th:value="${user.email}"
+                                               class="form-control" id="email" placeholder=""
+                                               maxlength="100"/>
+                                    </div>
+                                </div>
+                                <br/><br/>
+                            </div>
+                            <div class="box-footer" style="text-align: center;">
+                                <a class="btn btn-info" onclick="_submit()">提交</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!--<div th:replace="footer"></div>-->
+</div>
+<div th:replace="script"></div>
+<script>
+    function _submit() {
+        var password = $("#password").val();
+
+        if (password == null || password == '') {
+            alert("原始密码不能为空！！！");
+            return;
+        }
+        var newPassword = $("#newPassword").val();
+        if (newPassword == null || newPassword == '') {
+            alert("新密码不能为空！！！");
+            return;
+        }
+        var confirmNewPassword = $("#confirmNewPassword").val();
+        if (confirmNewPassword == null || confirmNewPassword == '') {
+            alert("确认密码不能为空！！！");
+            return;
+        }
+
+        if (newPassword != confirmNewPassword) {
+            alert("两次输入不一致！！！");
+            return;
+        }
+        var token =$("meta[name='csrf_token']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        var email=$("#email").val();
+        var data = {email:email,password: password, newPassword: newPassword, confirmNewPassword: confirmNewPassword};
+        $.ajax({
+            url: "[[@{${api}}]]",
+            type: "post",
+            data:JSON.stringify(data),
+            contentType: 'application/json;charset=utf-8',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(header,token);
+            },
+            success: function (data) {
+                if(data.code!=200){
+                    alert(data.msg);
+                }else{
+                    alert("保存成功！！！")
+                }
+            },
+            error: function (xhr, ajaxOptions, throwError) {
+
+            }
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdc.dao.DictDao">
+
+    <select id="get" resultType="com.bdc.entity.primary.Dict">
+        SELECT *
+        FROM dict
+        WHERE id = #{id}
+    </select>
+
+    <select id="findList" resultType="com.bdc.entity.primary.Dict">
+        SELECT
+        *
+        FROM dict
+        <where>
+            <if test="delFlag != null and delFlag != ''">
+                and delflag =#{delFlag,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null and type != ''">
+                AND type = #{type}
+            </if>
+            <if test="description != null and description != ''">
+                AND description LIKE
+                <if test="dbName == 'mssql'">'%'+#{description}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{description}, '%')</if>
+            </if>
+        </where>
+        ORDER BY type, sort, updatedate DESC
+    </select>
+
+    <select id="findAllList" resultType="com.bdc.entity.primary.Dict">
+        SELECT *
+        FROM dict
+        WHERE delflag = '0'
+        ORDER BY type, sort, updatedate DESC
+    </select>
+
+    <insert id="insert" parameterType="com.bdc.entity.primary.Dict" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO dict(
+        value,
+        label,
+        type,
+        description,
+        sort,
+        createby,
+        createdate,
+        updateby,
+        updatedate,
+        remarks,
+        delflag)
+        VALUES (
+        #{value},
+        #{label},
+        #{type},
+        #{description},
+        #{sort},
+        '0',
+        #{createDate},
+        '0',
+        #{updateDate},
+        #{remarks},
+        #{delFlag})
+    </insert>
+
+    <update id="update">
+        UPDATE dict
+        SET value       = #{value},
+            label       = #{label},
+            type        = #{type},
+            description = #{description},
+            sort        = #{sort},
+            update_by   = #{updateBy},
+            updatedate = #{updateDate},
+            remarks     = #{remarks}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="integer">
+        delete from dict
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateStatusById" parameterType="com.bdc.entity.primary.Dict">
+        update dict
+        set DELFLAG=#{status}
+        where ID = #{id}
+    </update>
+
+    <update id="updateById" parameterType="com.bdc.entity.primary.Dict" >
+        update dict
+        set value=#{dict.value} ,
+            label=#{dict.label},
+            type=#{dict.type} ,
+            description=#{dict.description} ,
+            updatedate=CURRENT_DATE,
+            REMARKS=#{dict.remarks},
+            SORT=#{dict.sort}
+        where id = #{id}
+    </update>
+
+    <select id="findQxdmListByCityCodePrefix" resultType="com.bdc.entity.primary.Dict">
+        select *
+        from DICT where type='QXDM' and value like '%' || #{cityCodePrefix}  || '%'
+    </select>
+
+    <select id="findMenuTypeList" resultType="com.bdc.entity.primary.Dict">
+        select *
+        from DICT where type='MENU' and DELFLAG='0'
+        order by SORT desc
+    </select>
+
+    <select id="findTjfl" resultType="com.bdc.entity.primary.Dict">
+        select * from DICT
+        where type='TJFL' and DELFLAG='0'
+        order by SORT desc
+    </select>
+</mapper>

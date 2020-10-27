@@ -1,0 +1,8 @@
+com\bdc\Impl\RoleServiceImpl.class
+com\bdc\Impl\RoleSelectService.class
+com\bdc\Impl\UserMenuServiceImpl.class
+com\bdc\Impl\RoleMenuServiceImpl.class
+com\bdc\Impl\BdctjServiceImpl.class
+com\bdc\Impl\UserServiceImpl.class
+com\bdc\Impl\MenuServiceImpl.class
+com\bdc\Impl\UserRoleServiceImpl.class

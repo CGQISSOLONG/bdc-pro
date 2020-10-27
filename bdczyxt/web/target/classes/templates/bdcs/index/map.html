@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <link rel="icon" th:href="@{/ly/images/logo_favicon.ico}">
+    <title>不动产查询分析-龙岩市不动产数据汇聚平台</title>
+    <!-- layui core CSS -->
+    <link th:href="@{/ly/dist/layui/css/layui.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" th:href="@{/ly/css/iconfont.css}">
+    <link th:href="@{/ly/css/hjpt.css}" rel="stylesheet">
+    <!-- 引入 ECharts 文件 -->
+    <script th:src="@{/ly/js/echarts.min.js}"></script>
+</head>
+<body class="hjpt_bg">
+<!-- header -->
+<header id="header">
+</header>
+<!-- 图表内容 -->
+<section id="chart_body">
+    <!-- 内容标题--图表切换 -->
+    <div class="chart_top">
+        <!-- 中间-办件综合统计--地图 -->
+        <div class="layui-tab layui-tab-card rank_box chart_t_l">
+            <ul class="layui-tab-title rank_tab">
+                <li th:label="1">
+                    办件量
+                    <span class="top-left border-span"></span>
+                    <span class="top-right border-span"></span>
+                    <span class="bottom-left border-span"></span>
+                    <span class="bottom-right border-span"></span>
+                </li>
+                <li class="layui-this" th:label="2">
+                    证书量
+                    <span class="top-left border-span"></span>
+                    <span class="top-right border-span"></span>
+                    <span class="bottom-left border-span"></span>
+                    <span class="bottom-right border-span"></span>
+                </li>
+                <li th:label="3">
+                    证明量
+                    <span class="top-left border-span"></span>
+                    <span class="top-right border-span"></span>
+                    <span class="bottom-left border-span"></span>
+                    <span class="bottom-right border-span"></span>
+                </li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item" id="chartBjl">办件量</div>
+                <div class="layui-tab-item layui-show" id="chartRank">
+                </div>
+                <div class="layui-tab-item" id="chartZjl">证明量</div>
+            </div>
+        </div>
+        <div th:include="bdcs/layout/nav.html :: header_url"></div>
+
+    </div>
+    <!-- 可视化图表内容模块 -->
+    <div class="chart_center chart_map">
+        <div class="chart_content">
+            <div class="map-box" id="chartMap"></div>
+        </div>
+    </div>
+
+    <div class="pic_footer">
+
+    </div>
+
+    <div class="chart_footer">
+
+        <!-- 选择阶段日期 -->
+        <div class="timecycle_box">
+            <!-- 上一个 -->
+            <div class="btn_box timeborder btn_pre">
+                <i class="iconfont icon-pre"></i>
+            </div>
+            <!-- 选择阶段日期 -->
+            <div class="time_box">
+                <ul class="time_ul">
+                    <li class="time_li timeborder" th:label="-1">
+                        <span class="time_a">上线</span>
+                        -
+                        <span class="time_b">至今</span>
+                    </li>
+                    <li th:class="${i==0 ? 'time_li timeborder active':'time_li timeborder'}"
+                        th:each="i,stat:${#numbers.sequence(0, nums)}" th:label="${year-i}">
+                        <span class="time_a" th:text="${year-i}+'年'"></span>
+                        -
+                        <span class="time_b">至今</span>
+                    </li>
+                </ul>
+            </div>
+            <!-- 下一个 -->
+            <div class="btn_box timeborder btn_next">
+                <i class="iconfont icon-next"></i>
+            </div>
+        </div>
+    </div>
+</section>
+<script type="text/javascript" th:src="@{/ly/dist/layui/layui.all.js}"></script>
+<script type="text/javascript" th:src="@{/ly/js/jquery-3.3.1.min.js}"></script>
+<!-- 引入 ECharts 文件 -->
+<script type="text/javascript" th:src="@{/ly/js/echarts.min.js}"></script>
+<script type="text/javascript" th:src="@{ly/js/hjpt.js}"></script>
+<script type="text/javascript" th:src="@{/ly/js/chartMap.js}"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    get_map_data();
+    $('.rank_tab  li').click(function () {
+        $(this).addClass('layui-this').siblings().removeClass('layui-this');
+        get_map_data();
+    });
+
+    $('.time_ul li').click(function () {
+        $(this).addClass('active').siblings().removeClass('active');
+        get_map_data();
+    });
+    function get_map_data() {
+        var zl = $(".layui-tab-title .layui-this").attr("label");
+        if (zl == 1) {
+            id = 'chartBjl';
+        } else if (zl == 3) {
+            id = 'chartZjl';
+        } else {
+            id = 'chartRank';
+        }
+        var sj = $(".time_ul .timeborder.active").attr("label");
+        var data = {"zl": zl, "sj": sj};
+        ajax_map_data_post(ctxPath + "bjfx/getMapData", data, zl, id);
+    }
+</script>
+</body>
+</html>

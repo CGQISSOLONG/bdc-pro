@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.admin.dao.primary.AdminMenuDao">
+
+    <select id="findMenuListById" resultType="com.admin.entity.primary.AdminMenu">
+             select m.*
+             from ADMIN_MENU m
+            join ADMIN_ROLEMENU rm on m.id = rm.menuid
+            join ADMIN_USER_ROLE ur on rm.roleid = ur.roleid
+            where m.disabled = 0
+            and ur.USERID = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <select id="findAllMenuList" resultType="com.admin.controller.admin.dto.TreeDto">
+        select a.id         AS "id",
+               a.PARENTID  AS "parent.id",
+               a.LABEL      AS "label",
+               a.PARENTIDS AS "parentIds",
+               b.LABEL      AS "parent.label"
+        from ADMIN_MENU a
+        left join ADMIN_MENU b on b.id = a.PARENTID
+    </select>
+    <select id="findMenuIdsByRoleId" resultType="java.lang.Integer">
+        select MENUID
+        from ADMIN_ROLEMENU
+        where ROLEID = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="delete">
+        delete
+        from ADMIN_MENU
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+
+    <select id="findAll" resultType="com.admin.entity.primary.AdminMenu">
+         select * from admin_menu
+    </select>
+
+    <select id="findOne" resultType="com.admin.entity.primary.AdminMenu">
+        select * from admin_menu where id=#{id}
+     </select>
+
+    <insert id="save"  parameterType="com.admin.entity.primary.AdminMenu" useGeneratedKeys="true" keyProperty="id">
+            insert into
+            admin_menu(label,parentIds,orderNum,url,type,disabled,rank,parentId)
+            values
+            (#{label},#{parentIds},
+            #{orderNum},#{url},
+            #{type},
+            #{disabled},#{rank},#{parentId})
+    </insert>
+    <update id="updateStateById" parameterType="com.admin.entity.primary.AdminMenu">
+            update admin_menu  set disabled =#{param2} where id=#{param1}
+    </update>
+</mapper>

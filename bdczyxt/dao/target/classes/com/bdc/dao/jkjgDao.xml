@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdc.dao.HjExceptionDao">
+
+<!--    汇聚异常日志监控查询-->
+    <select id="findAllLog" resultType="com.bdc.entity.HjExceptionLog">
+         select
+	       id as xh,
+	       getareaname(qxdm) qxdm,
+           PRO_NAME as proName,
+           YY as reason,
+           CRSJ
+        from hjpt_log_task
+		order by CRSJ desc
+    </select>
+
+
+
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdc.dao.RoleDao" >
+    <sql id="roleColumns">
+        r.id,r.rolename roleName,r.description,r.createtime createTime,r.updatetime updateTime,r.state
+    </sql>
+
+    <select id="findListByRoleIds" resultType="com.bdc.entity.Role">
+        select *  from role r where id in
+        <foreach collection="roleIds" item="roleId" separator="," open="(" close=")">
+            #{roleId}
+        </foreach>
+    </select>
+
+    <delete id="deleteById" parameterType="com.bdc.entity.Role">
+        DELETE FROM ROLE where ID= #{id}
+    </delete>
+
+    <select id="findRolesById" resultType="com.bdc.entity.Role">
+        select *
+        from ROLE a
+        join USER_ROLE b on a.id = b.roleid
+        where b.USERID = #{userId}
+    </select>
+
+    <select id="findAll" resultType="com.bdc.entity.Role">
+        select * from role
+    </select>
+
+    <select id="findOne" resultType="com.bdc.entity.Role">
+        select * from ROLE WHERE id = #{roleId}
+    </select>
+
+    <update id="updateStateById" parameterType="com.bdc.entity.Role">
+        update role  set state =#{param2} where id=#{param1}
+    </update>
+
+    <update id="update" parameterType="com.bdc.entity.Role">
+            update role set createtime =#{createTime},description = #{description},rolename=#{roleName},
+            state = #{state},updatetime = #{updateTime} where id = #{id}
+
+    </update>
+
+</mapper>

@@ -1,0 +1,51 @@
+<header class="main-header">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style>
+        #son2 li.two {
+            display: none;
+        }
+
+        #son2:hover li.two {
+            display: block;
+        }
+    </style>
+    <!-- Logo -->
+    <a th:href="@{/}" class="logo">
+        <span class="logo-mini"><b>不栋管家</b>后台管理</span>
+        <!-- logo for regular state and mobile devices -->
+        <span class="logo-lg"><b>不栋管家-</b>后台管理</span>
+    </a>
+
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top">
+        <!-- Sidebar toggle button-->
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+        </a>
+        <!-- Navbar Right AdminMenu -->
+        <div class="navbar-custom-menu">
+            <ul id="son2" class="nav navbar-nav">
+
+                <!-- AdminUser Account: style can be found in dropdown.less -->
+                <li class="one">
+                    <a th:href="@{/user/profile}">
+                        <span class="glyphicon glyphicon-user"></span> &nbsp;&nbsp;<span
+                            th:text="${user}?${user.username}"></span>
+                    </a>
+                </li>
+                <li class="two">
+                        <a  style="cursor:pointer;" onclick="_sub();">
+                            <span class="glyphicon glyphicon-user"></span> &nbsp;&nbsp;&nbsp;<span th:text="注销"></span>&nbsp;
+                        </a>
+                    <form th:action="@{/logout}" method="post" th:id="sub">
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<script type="text/javascript">
+    function _sub() {
+        $("#sub").submit();
+    }
+</script>

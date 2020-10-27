@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>数据汇交分析</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <link rel="stylesheet" th:href="@{/bdcs/layui/css/layui.css}"  media="all"/>
+</head>
+<style>
+    .layui-table,.layui-table-view{margin:0px 0}
+</style>
+<body style="overflow: hidden;">
+<table id="onlinetatio" lay-filter="onlinetatiofilter"></table>
+<script th:src="@{/bdcs/layui/layui.all.js}"></script>
+<script>
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    layui.use('table', function(){
+        var table = layui.table;
+        table.render({
+            title: "网上申请比例明细",
+            elem: '#onlinetatio',
+            width: "100%",
+            url: ctxPath+'hjfx/getFormOnlineData?sj=[[${sj}]]',
+            method:"post",
+            toolbar:true,
+            response: {statusCode: 200},
+            page: false,
+            defaultToolbar:[{
+                title: '返回',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-left'
+            },'exports'],
+            limit: 20,
+            limits:[20,40,60,80],
+            cols: [
+                [
+                    {align: 'center',field: "qxdmName", title: "地区", width:200,rowspan:2},
+                    {align: 'center',field: "evaluationScore", title: "评价分", width:220,rowspan:2} ,
+                    {align: 'center',field: "originalValue", title: "原始值(%)", width:220,rowspan:2},
+                    //{align: 'center',field: "zsCount", title: "臻善统计(%)", width:150,rowspan:2},
+                  /*  {align: 'center',field: "rank", title: "排名", width:150,rowspan:2},*/
+                    {align:'center',colspan:2,title:'基础数据'}
+                ],
+                [
+                    {align:'center',field:'wywlCount', width:355,title:'当年累计网上办结量(宗)', templet: function (d) {
+                            return '<div><a href="'+ctxPath+'getFormOnlineWebTotalDataMx?sj=[[${sj}]]&qxdm='+d.qxdm+'">' + d.wywlCount+ '</a></div> ';
+                        }},
+                    {align:'center',field:'ywlCount', width:353,title:'当年累计办结业务量(宗)', templet: function (d) {
+                            return '<div><a href="'+ctxPath+'getFormOnlineTotalDataMx?sj=[[${sj}]]&qxdm='+d.qxdm+'">' + d.ywlCount + '</a></div> ';
+                        }}
+                ]
+            ]
+        });
+
+        //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('toolbar(onlinetatiofilter)', function(obj){
+            //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var layEvent = obj.event;
+             if(layEvent === 'LAYTABLE_TIPS'){
+                //layer.alert('Hi，头部工具栏扩展的右侧图标。');
+                 window.location.href=ctxPath+'h_onlineratio';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

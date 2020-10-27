@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <script type="text/javascript" th:inline="javascript">
+
+
+    </script>
+    <body>
+        <div th:fragment="header_url">
+            <div class="chart_t_c">
+                <h4 class="chart_title" th:if="${active==1}">数据分析-一致率</h4>
+                <h4 class="chart_title" th:if="${active==2}">数据分析-网上申请比例</h4>
+                <h4 class="chart_title" th:if="${active==3}">数据分析-平均用时</h4>
+                <div class="chart_date" th:if="${true}">
+                    <div class="dateicon_box">
+                        <span class="icon_date_l icon_date"></span>
+                    </div>
+                    <div class="layui-form date_select">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="daterange" placeholder=" 日期范围 ">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dateicon_box">
+                        <span class="icon_date_r icon_date"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="chart_t_r">
+                <ul class="chart_type">
+                    <!--数据表格 -->
+                    <li class="chart_icon_li" title="数据表格">
+                        <i class="iconfont icon-FormChart"></i>
+                    </li>
+                    <!--<li th:if="${active==2}" class="chart_icon_li" title="数据表格">
+                         <i class="iconfont icon-FormChart"></i>
+                     </li>
+                    <li th:if="${active==3}" class="chart_icon_li" title="数据表格">
+                         <i class="iconfont icon-FormChart"></i>
+                     </li>-->
+                </ul>
+            </div>
+        </div>
+        <div th:fragment="time">
+        </div>
+    </body>
+</html>

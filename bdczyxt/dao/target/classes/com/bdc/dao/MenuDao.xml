@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdc.dao.MenuDao" >
+<!--    <select id="findListByMenuIds" resultType="com.bdc.entity.Menu">-->
+<!--        select * from menu where menuIds = #{menuIds}-->
+<!--    </select>-->
+
+    <sql id="menuColumns">
+        m.id,m.menu_name menuName,m.parentid,m.url,m.permission_name permissionName,
+        m.menu_type menuType,m.order_num orderNum,m.createtime createTime,
+        m.update_time updateTime,m.state,m.imageurl
+    </sql>
+
+
+    <select id="findListByMenuIds" resultType="com.bdc.entity.Menu">
+        select
+        <include refid="menuColumns"/>
+        from menu m where id in
+        <foreach collection="menuIds" item="menuId" separator="," open="(" close=")">
+            #{menuId}
+        </foreach>
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM MENU where ID=#{id,jdbcType=BIGINT}
+    </delete>
+
+
+    <select id="findAllMenuList" resultType="com.bdc.entity.bdcTree">
+        select a.id         AS "id",
+        a.PARENTID  AS "parent.id",
+        a.LABEL      AS "label",
+        a.IMAGEURL AS "imageUrl",
+        a.PARENTIDS AS "parentIds",
+        b.LABEL      AS "parent.label"
+        from MENU a
+        left join MENU b on b.id = a.PARENTID
+    </select>
+
+    <select id="findMenuIdsByRoleId" resultType="java.lang.Integer">
+        select MENU_ID
+        from ROLE_MENU
+        where ROLE_ID = #{id}
+    </select>
+
+    <select id="findMenubyUserId" resultType="com.bdc.entity.Menu">
+        select m.*
+        from MENU m
+                 join ROLE_MENU rm on m.id = rm.menu_id
+                 join USER_ROLE ur on rm.role_id = ur.role_id
+        where m.disabled = 0
+          and ur.USERID = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <select id="findMenubyUserId2" resultType="com.bdc.entity.Menu">
+        select m.*
+        from MENU m
+                 join ROLE_MENU rm on m.id = rm.menu_id
+                 join USER_ROLE ur on rm.role_id = ur.roleid
+        where m.disabled = 0 and m.type=#{type,jdbcType=VARCHAR}
+          and ur.USERID = #{id,jdbcType=INTEGER}
+          order by m.ORDER_NUM
+    </select>
+
+    <select id="findList" resultType="com.bdc.entity.Menu">
+        select
+        t.id,
+        t.label ,
+        t.url,
+        t.order_num as  orderNum,
+        t.DISABLED,
+        t.IMAGEURL as imageUrl,
+        t.type,
+        (select d.label from dict d where d.type ='MENU' and d.value =t.type) as typeName
+        from MENU t
+    </select>
+
+    <insert id="create">
+           Menu create(Menu menu);
+    </insert>
+
+
+    <update id="modify" parameterType="com.bdc.entity.Menu">
+             update Menu  set disabled =#{disabled},label =#{label},url = #{url},type = #{type},
+              parentids = #{parentIds},parentid = #{parentId},
+              order_num = #{orderNum},rank = #{rank},style = #{style}
+              where id=#{id}
+    </update>
+
+    <update id="updateStateById" parameterType="com.bdc.entity.Menu">
+        update Menu  set disabled =#{param2} where id=#{param1}
+    </update>
+
+    <select id="findAlls" resultType="com.bdc.entity.Menu">
+                select * from menu
+    </select>
+
+    <select id="findOne" resultType="com.bdc.entity.Menu">
+        select * from menu where id=#{id}
+    </select>
+
+    <select id="getOne" resultType="com.bdc.entity.Menu">
+        select * from menu where id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.bdc.entity.Menu" useGeneratedKeys="true" keyProperty="id">
+          insert into menu (label,url,type,parentids,parentid,order_num,rank,disabled,imageurl,style)
+        values (#{label},#{url},#{type},#{parentIds},#{parentId},#{orderNum},#{rank},#{disabled},#{imageUrl},#{style})
+    </insert>
+
+
+
+</mapper>

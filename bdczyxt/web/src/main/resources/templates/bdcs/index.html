@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" th:href="@{/bdcxt/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/bdcxt/css/style3.css}"/>
+    <script th:src="@{/bdcxt/js/jquery.min.js}"></script>
+    <script th:src="@{/bdcxt/js/echarts.js}"></script>
+    <link rel="stylesheet" th:href="@{/bdcs/layui/css/layui.css}"/>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body, html {
+        width: 100%;
+        height: 100%;
+    }
+
+    body {
+        overflow: hidden;
+        position: relative;
+    }
+
+    .header, .aside, .section, footer {
+        position: absolute;
+    }
+
+    .header {
+        height: 50px;
+        top: 0px;
+        width: 100%;
+    }
+
+    .aside {
+        left: 0;
+        top: 50px;
+        bottom: 0;
+        overflow: auto;
+        width: 240px;
+    }
+
+    .section {
+        left: 49px;
+        right: 0;
+        top: 50px;
+        bottom: 0;
+        overflow: auto;
+    }
+
+    .header .nav {
+        border: 0px solid red;
+    }
+    .menu{
+        width: 180px;
+    }
+    .menu-top{
+        /*width: 175px;*/
+    }
+    .menu-top .logo{
+        padding-left: 15px;
+        width: 30px;
+        margin-right: 0px;
+    }
+    .log{
+        padding-right:20px;
+        padding-left:20px;
+        height: 60px;
+        line-height: 60px;
+        color: #FFFFFF;
+        font-size:20px;
+        float: left
+    }
+    .item-tab-bar{
+        margin-left: 1px;
+    }
+</style>
+
+<body class="container" id="container">
+<img th:src="@{/bdcxt/img/skin/skin-jianbian.jpg}" id="bg"/>
+<!--<img th:src="@{/bdcxt/img/skin/skin-yuzhou.png}" id="bg"/>-->
+<!--<img th:src="@{/bdcxt/img/skin/yuantu2.jpg}" id="bg"/>-->
+<div class="header aheader"  id="head">
+    <div class="menu-top fl" id="down">
+        <span class="logo"></span>
+
+        <!--        <span class="logo">汇聚平台</span>-->
+    </div>
+    <div id ="sliplog" class="tes tests ">
+        <span class="log" id="logs">不栋管家</span>
+    </div>
+
+    <div class="head-right fr">
+        <!--<div class="head">
+        <img th:src="img/head.png" />
+        </div>-->
+<!--        <span style="position: relative;"><span th:text="'欢迎您，' + ${session.staffName}"></span>-->
+        <span style="position: relative;"><span th:text="'欢迎您，' + ${session.username}"></span>
+            <!--<strong class="p-num"></strong>-->
+        </span>
+        <div class="head-box">
+            <span class="arrow-up"></span>
+            <ul>
+                <!--<li class="massage-bg" onclick="lay_win('功能正在建设中...');">消息<span class="massage-num">3</span></li>
+                <li class="help-bg" onclick="lay_win('功能正在建设中...');">帮助</li>-->
+                <li class="set-bg" onclick="lay_win('功能正在建设中...');">设置</li>
+                <li class="quit"><a th:href="@{/user/logout}">退出</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="head-rightZ fr">
+        <span style="position: relative;">子系统</span>
+        <div class="head-boxZ">
+            <span class="arrow-up"></span>
+            <ul id="navUl" style="display:block; text-align:center ;margin: 0px -10px;">
+                <li th:if="${not #lists.isEmpty(list)}"  th:class="${dict.value=='1'? 'on set-bg':'set-bg'}" th:onclick="|CreateDiv22('${dictStat.index+2000}',
+        '${dict.label}','${dict.value}','${dict.remarks}')|" th:each="dict,dictStat:${list}">
+                    <a href="javascript:void(0);"><span th:text="${dict.label}"></span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--<ul class="nav clearfix">
+        <li th:if="${not #lists.isEmpty(list)}"  th:class="${dict.value=='1'? 'on':''}" th:onclick="|CreateDiv22('${dictStat.index+2000}',
+        '${dict.label}','${dict.value}','${dict.remarks}')|" th:each="dict,dictStat:${list}">
+            <a href="javascript:void(0);" th:class="${dict.value=='1'? 'nav5':'nav7'}"><span th:text="${dict.label}"></span></a>
+        </li>
+    </ul>-->
+
+    <div class="item-tab-bar head-rightD fr" id="tabBar">
+        <!--<span class="tab-bar-home fl" id="homeBar">首页</span>-->
+        <img onclick="to_toggleClass();"
+             th:style="'float: left;padding-right: 5px;width: 20px;height: 20px;line-height: 36px;margin-top: 10px;border-right: 1px solid #005089;'"
+             th:src="@{/bdcs/images/caidan.png}"/>
+        <ul class="tab-bar clearfix" id="div_tab">
+
+        </ul>
+    </div>
+</div>
+
+<div class="aside" id="aside">
+    <div id="aside_menu" class="menu showmenu">
+        <div class="menu-con">
+            <ul class="f-menu" id="f-menu">
+                <li th:if="${not #lists.isEmpty(session.menu)}" class="parLi" th:each="menu,menuStat:${session.menu}">
+                    <div class="menu-item" th:style="'background-image:url('+ @{/getImage(id=${menu.id})} +')'"
+                         th:onclick="|CreateDiv('${menu.id}','${menu.url}','${menu.label}')|">
+                        <span class="list-txt" th:text="${menu.label}"></span>
+                    </div>
+                    <ul class="s-menu" th:if="${not #lists.isEmpty(menu.childNodes)}">
+                        <li th:each="second,secondStat:${menu.childNodes}">
+                            <div class="menu-item"
+                                 th:onclick="|CreateDiv('${second.id}','${second.url}','${second.label}')|">
+                                <span class="list-txt" th:text="${second.label}"></span>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+<!--            <div style="position:absolute;left:10px;bottom:0;" id="footerVal">&copy;2020浙江臻善科技股份有限公司</div>-->
+        </div>
+    </div>
+</div>
+
+<div class="section" id="iframeContanier">
+
+    <div class="con">
+        <div class="iframe-pannel" id="div_pannel">
+
+        </div>
+        <!--<div class="footer">Copyright&copy;2019-2020&nbsp;&nbsp;浙江臻善科技股份有限公司</div>-->
+    </div>
+</div>
+<!--弹出的层-->
+<div class="pop-con" id="popCon">
+    <div class="tab-menu" id="tabMenu">
+        <span class="icon-home"></span>
+        <ul class="tablist" id="div_tab_pop">
+        </ul>
+        <span class="icon-more"></span>
+        <div class="more-box">
+            <ul>
+                <li id="view-fullscreen">全屏</li>
+                <li>关闭全部</li>
+                <li>关闭其他标签</li>
+                <li class="skin-bg">更换皮肤
+                    <div class="skin-list">
+                        <ul>
+                            <li name='huoli' class="skin-style">活力</li>
+                            <li name='chouxiang'>抽象世界</li>
+                            <li name='shuijinglan'>水晶蓝</li>
+                            <li name='yuzhou'>宇宙</li>
+                            <li name='wanxia'>晚霞</li>
+                            <li name='jianbian'>渐变</li>
+                            <li name='lanbai' class="skin-style">蓝白</li>
+                            <li name='shangwuhei' class="skin-style">商务黑</li>
+                        </ul>
+                        <span class="arrow-right"></span>
+                    </div>
+                </li>
+                <li id="cancel-fullscreen">退出全屏</li>
+            </ul>
+        </div>
+    </div>
+    <div class="pop-con-tabitem" id="div_pannel_pop">
+    </div>
+</div>
+
+<div class="tip-pop">
+    <div class="tip-head">通知提醒<img th:src="@{/bdcxt/img/close.png}" onclick="TipPopHide()"/></div>
+    <div class="tip-contanier">
+        <p class="tip-con" th:style="'height:0px;'" id="tipCon"></p>
+        <p class="tip-con" th:style="'height:0px;margin-top: 20px;'" id="tipCon2"></p>
+        <p class="tip-con" th:style="'height:0px;margin-top: 20px;'" id="tipCon3"></p>
+        <div class="tip-btn" onclick="view_detail('200','case_analysis','汇聚统计')">点击查看</div>
+    </div>
+</div>
+<!--右键菜单的源-->
+<div class="contextMenu" id="myMenu">
+    <ul>
+        <li id="close_other">关闭其它标签</li>
+        <li id="close_all">关闭所有标签</li>
+    </ul>
+</div>
+</body>
+<script th:src="@{/bdcs/layui/layui.all.js}"></script>
+<script th:src="@{/bdcxt/js/index.js}"></script>
+<script th:src="@{/bdcs/js/jquery.contextmenu.r2.js}"></script>
+<script th:src="@{/bdcs/js/common.js}"></script>
+<script th:src="@{/bdcxt/js/index_pop.js}"></script>
+
+<script>
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    $(document).ready(function () {
+        if (window != top) {
+            top.location.href = location.href;
+        }
+    });
+
+    $(function () {
+        CreateDiv('0', 'histogram', '首页');
+        _ajax_get(ctxPath + "bdctj/getHjCount", function (result) {
+            if (result.code == '200') {
+                $("#tipCon").html('汇交总量：' + result.data.hjzl);
+                $("#tipCon2").html('昨日新增汇交量：' + result.data.zrhj);
+                $("#tipCon3").html('近一周汇交量：' + result.data.yzhj);
+                TipPopShow();
+            }
+        });
+
+    });
+    $('div.item-tab-bar').contextMenu('myMenu',
+        {
+            bindings: {
+                'close_other': function (t) {
+                    removeotherAllLiChild();
+                },
+                'close_all': function (t) {
+                    removeAllLiChild();
+                }
+            }
+        }
+    );
+
+    function view_detail(id, url, name) {
+        TipPopHide();
+        CreateDiv(id, url, name);
+    }
+
+    function CreateDiv22(id,label,value,remarks) {
+        if(remarks!='1'){
+            CreateDiv(id,'jsz',label);
+            return;
+        }
+        $.ajax({
+            type: "get",
+            url: 'jsz?type='+value,
+            dataType: "json",
+            success: function (result) {
+                if (result.code == '200') {
+                    var info = document.getElementById("f-menu");
+                    $("#f-menu").empty();
+                    var data = result.data;
+                    for (var i = 0; i < data.length; i++) {
+                        var li = document.createElement('li');
+                        li.id = "li_" + i;
+                        li.className = "parLi";
+                        var div = document.createElement('div');
+                        div.className = "menu-item";
+                        div.style = "background-image:url(" + ctxPath + "getImage?id=" + data[i].id + ")";
+                        div.setAttribute("onclick", "CreateDiv('" + data[i].id + "','" + data[i].url + "','" + data[i].label + "')");
+                        var span = document.createElement('span');
+                        span.className = "list-txt";
+                        span.textContent = data[i].label;
+                        div.appendChild(span);
+                        li.appendChild(div);
+                        //二级菜单
+                        if (data[i].childNodes != null && data[i].childNodes.length > 0) {
+                            for (var j = 0; j < data[i].childNodes.length; j++) {
+                                var ul = document.createElement('ul');
+                                ul.className = "s-menu";
+                                var li2 = document.createElement('li');
+                                var div2 = document.createElement('div');
+                                div2.className = "menu-item";
+                                var span2 = document.createElement('span');
+                                span2.className = "list-txt";
+                                span2.textContent = data[i].childNodes[j].label;
+                                div2.setAttribute("onclick", "CreateDiv('" + data[i].id + "','" + data[i].childNodes[j].url + "','" + data[i].childNodes[j].label + "')");
+                                div2.appendChild(span2);
+                                li2.appendChild(div2);
+                                ul.appendChild(li2);
+                                li.appendChild(ul);
+                                span2.style.background = "none";
+                            }
+                        }else{
+                            span.style.background = "none";
+                        }
+                        info.appendChild(li);
+                    }
+                } else {
+                    lay_win("系统异常,请重新登陆！！！");
+                }
+
+            },
+            error: function (errorMsg) {
+                lay_win("系统异常,请重新登陆！！！");
+            }
+        });
+    }
+</script>
+</html>

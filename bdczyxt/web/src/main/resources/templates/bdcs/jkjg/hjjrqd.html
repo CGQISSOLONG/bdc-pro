@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>汇聚接入清单</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/bdcxt/css/search.css}"/>
+    <link rel="stylesheet" th:href="@{/bdcs/layui/css/layui.css}" media="all"/>
+</head>
+<style>
+    .key-con input {
+        width: 220px;
+        height: 28px;
+        line-height: 14px;
+        border: 0px solid #CFCFCF;
+        text-indent: 0px;
+    }
+</style>
+<body style="overflow-x: hidden;">
+<div>
+    <div class="search-head clearfix" style="display: flex;flex-wrap: wrap;padding-left: 10px;">
+        <div class="key-con fl" style="display: flex;width: 250px;">
+            <span class="fl">业务号：</span>
+            <div class="input-border">
+                <input type="text" class="layui-input" id="ywh" style="width: 200px;">
+            </div>
+        </div>
+        <div class="key-con fl" style="width: 250px; margin-left: 44px;">
+            <span class="fl">登记类型：</span>
+            <div class="input-border" style="display: inline-table;"><!--罗丹-->
+                <select id="djlx" style="width: 170px;height: 100%;border: 0px solid #CFCFCF;text-indent: 6px;">
+                    <option value=""></option>
+                    <option th:if="${not #lists.isEmpty(djlx)}" th:each="djlx:${djlx}" th:value="${djlx.code}">
+                        [[${djlx.name}]]
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="key-con fl" style="display: flex;width: 250px;margin-left: 44px;">
+            <span class="fl">权利类型：</span>
+            <div class="input-border">
+                <input type="text" class="layui-input" id="qllx">
+            </div>
+        </div>
+        <div class="key-con fl" style="width: 230px;margin-left: 28px;">
+            <span class="fl">统计分类：</span>
+            <div class="input-border" style="display: inline-table;"><!--罗丹-->
+                <select id="tjfl" style="width: 150px;height: 100%;border: 0px solid #CFCFCF;text-indent: 6px;">
+                    <option value=""></option>
+                    <option th:if="${not #lists.isEmpty(tjfl)}" th:each="tjfl:${tjfl}" th:value="${tjfl.label}">
+                        [[${tjfl.label}]]
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="key-con fl" style="width: 250px;margin-left: 36px;margin-left: 36px;">
+            <span class="fl">区域：</span>
+            <div class="input-border" style="display: inline-table;"><!--罗丹-->
+                <select id="qxdm" style="width: 165px;height: 100%;border: 0px solid #CFCFCF;text-indent: 6px;">
+                    <option value=""></option>
+                    <option th:if="${not #lists.isEmpty(dict)}" th:each="dict:${dict}" th:value="${dict.value}">
+                        [[${dict.label}]]
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="key-con fl" style="display: flex;width: 250px;margin-left: 4px;">
+            <span class="fl">受理时间：</span>
+            <div class="input-border">
+                <input type="text" class="layui-input" id="slsj">
+            </div>
+        </div>
+        <div style="margin-left: 50px;">
+            <div class="btn btn-blue fl" id="queryData" onclick="sumbit();" >
+                搜 索
+            </div>
+            &nbsp;
+            <div class="btn btn-blue fl" id="clearData" onclick="clearForm();" >
+                重 置
+            </div>
+        </div>
+    </div>
+</div>
+<div style="position: absolute;z-index: 1000001;margin-top: 15px;margin-left: 1190px;">
+    <button class="layui-btn" id="export">
+        <i class="iconfont icon-export"></i> 导出excel
+    </button>
+</div>
+<input type="hidden" id="startDate" name="startDate"/>
+<input type="hidden" id="endDate" name="endDate"/>
+<table id="hjjrqd" lay-filter="hjjrqdfilter"></table>
+<script th:src="@{/bdcs/layui/layui.all.js}"></script>
+<script th:src="@{/bdcxt/js/jquery.min.js}"></script>
+<script>
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    var tableIns;
+    layui.use('table', function () {
+        var table = layui.table;
+        tableIns = table.render({
+            elem: '#hjjrqd',
+            width: "100%",
+            url: ctxPath + 'jkjg/getHjjrqdData',
+            method: "post",
+            toolbar: true,
+            response: {statusCode: 200},
+            page: true,
+            defaultToolbar: [],
+            limit: 20,
+            limits: [20, 40, 60, 80],
+            cols: [
+                [
+                    {field: 'ywh',align: "center", title: "业务号", width: 180, rowspan: 2},
+                    {field: 'bdclx',align: "center", title: "不动产类型", width: 160, rowspan: 2},
+                    {field: 'djlx',align: "center", title: "登记类型", width: 100, rowspan: 2},
+                    {field: 'djxl',align: "center", title: "登记小类", width: 100, rowspan: 2},
+                    {field: 'zllb',align: "center", title: "资料类别", width: 200, rowspan: 2},
+                    {field: 'qllxmc',align: "center", title: "权利类型名称", width: 200, rowspan: 2},
+                    {field: 'tjfl',align: "center", title: "统计分类", width: 100, rowspan: 2},
+                    {field: 'qxdm',align: "center", title: "区县", width: 100, rowspan: 2},
+                    {field: 'dbsj',align: "center", title: "登簿时间", width: 160, rowspan: 2},
+                    {field: 'slsj',align: "center", title: "受理时间", width: 160, rowspan: 2},
+                    {field: 'qszt',align: "center", title: "权属状态", width: 100, rowspan: 2},
+                    {field: 'zydjzl',align: "center", title: "转移登记种类", width: 150, rowspan: 2},
+                    {field: 'qlrlb',align: "center", title: "权利人类别", width: 150, rowspan: 2},
+                    {field: 'crsj',align: "center", title: "插入时间", width: 160, rowspan: 2}
+                ]
+            ]
+        });
+        //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('toolbar(hjjrqdfilter)', function (obj) {
+            //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var layEvent = obj.event;
+            if (layEvent === 'LAYTABLE_TIPS') {
+                //layer.alert('Hi，头部工具栏扩展的右侧图标。');
+                window.location.href = ctxPath + 'h_hjyzrate';
+            }
+        });
+
+        $("#export").click(function () {
+            $.ajax({
+                type: "get",
+                url: ctxPath+'jkjg/getQdDataAll',
+                data: {
+                    ywh: document.getElementById("ywh").value,
+                    djlx: document.getElementById("djlx").value,
+                    qllx: document.getElementById("qllx").value,
+                    qxdm: document.getElementById("qxdm").value,
+                    tjfl: document.getElementById("tjfl").value,
+                    start: document.getElementById("startDate").value,
+                    end: document.getElementById("endDate").value
+                },
+                dataType: "json",
+                success: function (result) {
+                    debugger;
+                    if (result.code == '200') {
+                        table.exportFile(tableIns.config.id, result.data, 'xls');
+                    } else {
+                        lay_win("导出失败，请重试！！！")
+                    }
+
+                },
+                error: function (errorMsg) {
+                    lay_win("导出失败，请重试！！！")
+                }
+            });
+        });
+    });
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#slsj', //指定元素
+            range: true,
+            done: function (value, date, endDate) {
+                if (value != null && value != '') {
+                    $("#startDate").val(dateToStringForLayui(date));
+                    $("#endDate").val(dateToStringForLayui(endDate));
+                }else {
+                    $("#startDate").val("");
+                    $("#endDate").val("");
+                }
+            }
+        });
+    });
+
+    function sumbit() {
+        var ywh = document.getElementById("ywh").value;
+        var djlx = document.getElementById("djlx").value;
+        var qllx = document.getElementById("qllx").value;
+        var qxdm = document.getElementById("qxdm").value;
+        var tjfl = document.getElementById("tjfl").value;
+        var startDate = document.getElementById("startDate").value;
+        var endDate= document.getElementById("endDate").value;
+        tableIns.reload({
+            where: {
+                //设定异步数据接口的额外参数，任意设
+                ywh: ywh
+                ,djlx: djlx
+                ,qllx: qllx
+                ,qxdm: qxdm
+                ,tjfl: tjfl
+                ,start: startDate
+                ,end : endDate
+            }
+            , page: {
+                curr: 1 //重新从第 1 页开始
+            }
+        });
+    }
+
+    function clearForm() {
+        document.getElementById("ywh").value = '';
+        document.getElementById("djlx").value = '';
+        document.getElementById("qllx").value = '';
+        document.getElementById("qxdm").value = '';
+        document.getElementById("tjfl").value = '';
+        document.getElementById("slsj").value = '';
+        document.getElementById("startDate").value = '';
+        document.getElementById("endDate").value = '';
+        sumbit();
+    }
+
+    function dateToStringForLayui(dateObj) {
+        var FullYear = dateObj.year;
+        var Month = dateObj.month;
+        var Day = dateObj.date;
+        var Hours = dateObj.hours;
+        var Minutes = dateObj.minutes;
+        var Seconds = dateObj.seconds;
+        return FullYear + "-" + Month + "-" + Day
+
+    }
+
+</script>
+
+</body>
+</html>

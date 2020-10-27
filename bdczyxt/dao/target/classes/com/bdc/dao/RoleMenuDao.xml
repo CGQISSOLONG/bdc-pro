@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdc.dao.RoleMenuDao" >
+
+    <sql id="roleMenuColumns">
+        rm.id,rm.menu_id menuId,rm.menu_name menuName,rm.role_id roleId,
+        rm.role_name roleName,rm.create_time createTime
+    </sql>
+    <select id="findListByRoleIds" resultType="com.bdc.entity.RoleMenu">
+        select
+        <include refid="roleMenuColumns"/>
+        from role_menu rm
+        where rm.role_id in
+        <foreach collection="roleIds" item="roleId" separator="," open="(" close=")">
+            #{roleId}
+        </foreach>
+    </select>
+    <delete id="deleteByRoleId">
+        DELETE FROM ROLE_MENU where ROLE_ID= #{id}
+    </delete>
+
+    <delete id="deleteByMenuId">
+        DELETE FROM ROLE_MENU WHERE MENU_ID=#{id}
+    </delete>
+
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ROLE_MENU
+        (
+        ROLE_ID,
+        MENU_ID
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{roleId},
+            #{item}
+            )
+        </foreach>
+
+    </insert>
+</mapper>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>数据汇交分析一致率与决策系统对比情况汇总</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/sx/css/search.css}"/>
+    <link rel="stylesheet" th:href="@{/ly/dist/layui/css/layui.css}" media="all"/>
+</head>
+<style>
+    .layui-table,.layui-table-view{margin:0px 0}
+</style>
+<body style="overflow-x: hidden;">
+<div>
+    <div class="search-head clearfix" style="display: flex;padding-left: 20px;">
+        <div class="key-con fl" style="width: 250px;">
+            <span class="fl">区域：</span>
+            <div class="input-border" style="display: inline-table;"><!--罗丹-->
+                <select id="p_qxdm" style="width: 200px;height: 100%;border: 0px solid #CFCFCF;text-indent: 6px;">
+                    <option th:if="${not #lists.isEmpty(dict)}" th:each="dict:${dict}" th:value="${dict.value}">
+                        [[${dict.label}]]
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="key-con fl" style="display: flex;width: 250px;">
+            <span class="fl">日期：</span>
+            <div class="input-border">
+                <input type="text" class="layui-input" id="date_id">
+            </div>
+        </div>
+        <div class="btn btn-blue fl" id="queryData" onclick="sumbit();">
+            搜 索
+        </div>
+    </div>
+</div>
+<table id="hjyzrate" lay-filter="hjyzratefilter"></table>
+<script th:src="@{/ly/dist/layui/layui.all.js}"></script>
+<script>
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    var tableIns;
+    layui.use('table', function () {
+        var table = layui.table;
+        tableIns = table.render({
+            title:"一致率与决策系统对比报表",
+            elem: '#hjyzrate',
+            id: "idTest",
+            width: "100%",
+            url: ctxPath + 'hjfx/getYzlJcData',
+            method: "post",
+            toolbar: true,
+            response: {statusCode: 200},
+            page: false,
+            defaultToolbar: ['exports'],
+            limit: 20,
+            limits: [20, 40, 60, 80],
+            cols: [
+                [
+                    {align: 'center',field: "compareDate", title: "时间", width: 120, rowspan: 2},
+                    {align: 'center',field: "statistics", title: "纳入统计", width: 100, rowspan: 2},
+                    {align: 'center', colspan: 3, title: '臻善统计结果'},
+                    {align: 'center', colspan: 3, title: 'pdf统计结果'},
+                    {align: 'center', colspan: 2, title: '决策系统数据'}
+
+                ],
+                [
+                    {align: 'center', field: 'zsJrCount', width: 100, title: '当天接入量'},
+                    {align: 'center', field: 'zsJrDbcount', width: 150, title: '当天登簿接入量'},
+                    {align: 'center', field: 'zsDbCount', width: 100, title: '登簿量'},
+                    {align: 'center', field: 'pdfJrCount', width: 100, title: '当天接入量'},
+                    {align: 'center', field: 'pdfJrDb', width: 150, title: '当天登簿接入量'},
+                    {align: 'center', field: 'pdfDbCount', width: 100, title: '登簿量'},
+                    {align: 'center', field: 'jcDbJrcount', width: 180, title: '当天登薄的报文接入量'},
+                    {align: 'center', field: 'jcDbLogcount', width: 200, title: '登簿日志中的登薄量'}
+                ]
+            ]
+        });
+        //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('toolbar(hjyzratefilter)', function (obj) {
+            //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var layEvent = obj.event;
+            if (layEvent === 'LAYTABLE_TIPS') {
+                //layer.alert('Hi，头部工具栏扩展的右侧图标。');
+                window.location.href = ctxPath + 'h_hjyzrate';
+            }
+        });
+    });
+
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#date_id', //指定元素
+            type: "month"
+        });
+    });
+
+    function sumbit() {
+        var date = document.getElementById("date_id").value;
+        var qxdm = document.getElementById("p_qxdm").value;
+        tableIns.reload({
+            where: {
+                //设定异步数据接口的额外参数，任意设
+                sj: date,
+                qxdm: qxdm
+            }
+            , page: {
+                curr: 1 //重新从第 1 页开始
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="web" />
+        <module name="dao" />
+        <module name="common" />
+        <module name="serviceimpl" />
+        <module name="service" />
+        <module name="statistics" />
+        <module name="admin" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="admin" target="1.8" />
+      <module name="bdczyxt" target="1.8" />
+      <module name="common" target="1.8" />
+      <module name="dao" target="1.8" />
+      <module name="parent_pom" target="1.8" />
+      <module name="pom_parent" target="1.8" />
+      <module name="service" target="1.8" />
+      <module name="serviceimpl" target="1.8" />
+      <module name="statistics" target="1.8" />
+      <module name="web" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="admin" options="" />
+      <module name="bdczyxt" options="" />
+      <module name="common" options="" />
+      <module name="dao" options="" />
+      <module name="parent_pom" options="-parameters" />
+      <module name="service" options="" />
+      <module name="serviceimpl" options="" />
+      <module name="statistics" options="" />
+      <module name="web" options="" />
+    </option>
+  </component>
+</project>

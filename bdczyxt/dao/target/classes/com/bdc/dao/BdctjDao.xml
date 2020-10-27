@@ -1,0 +1,702 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdc.dao.BdctjDao">
+
+    <select id="countData" resultType="java.lang.Integer">
+        select IFNULL(sum(counts),0)  counts  from (
+ select (count(distinct ywh)) counts,qxdm from sh group by qxdm) as a
+    </select>
+
+    <select id="countDataByDay" resultType="java.lang.Integer">
+      select IFNULL(sum(counts),0)  counts  from (
+ select (count(distinct ywh)) counts,qxdm from sh  where crsj =str_to_date(#{date}, '%Y-%m-%d')
+  group by qxdm) as a
+    </select>
+
+    <select id="findHjzlCount" resultType="java.lang.Integer">
+        select IFNULL(sum(counts),0)  counts  from (
+         select (count( ywh)) counts,qxdm from sh group by qxdm) as a
+    </select>
+
+    <select id="findZrhjCount" resultType="java.lang.Integer">
+     select IFNULL(sum(counts),0)  counts  from (
+     select (count(ywh)) counts,qxdm from sh  where crsj=curdate()-1 group by qxdm) as a
+    </select>
+
+    <select id="findYzhjCount" resultType="java.lang.Integer">
+         select IFNULL(sum(counts),0)  counts  from (select (count(1)) counts,qxdm from sh where crsj>curdate()-7  group by qxdm) as a
+    </select>
+
+    <select id="getHistogramData" resultType="java.util.Map">
+        select count(distinct ywh) counts,getareaname(t.qxdm) qxdm
+        from MV_TJ_SLSXYB t
+        <where>
+            SUBSTR(t.qxdm,0,4)=#{qxdmTemp}
+            <if test="djdl != null and djdl != '' and (djdl==100 || djdl==200 || djdl==300 || djdl==500)">
+                and t.tjfl ='产权类' and t.djdl =#{djdl}
+            </if>
+            <if test="djdl != null and djdl != '' and (djdl==400 || djdl==600)">
+                and t.djdl =#{djdl}
+            </if>
+            <if test="djdl != null and djdl != '' and djdl==700">
+                and t.tjfl like '%预告%' and t.djdl ='700'
+            </if>
+            <if test="djdl != null and djdl != '' and djdl==800">
+                and t.tjfl in ('查封类','解封类')
+            </if>
+            <if test="djdl != null and djdl != '' and djdl==900">
+                and t.tjfl ='抵押类'
+            </if>
+            <if test="djdl != null and djdl != '' and djdl==1000">
+                and t.tjfl ='行政限制类'
+            </if>
+
+            <if test="djdl != null and djdl != '' and djdl==2000">
+                and t.tjfl ='地役权登记类'
+            </if>
+            <if test="sj != null and sj != '' and sj !=-1">
+                and 　date_format(t.dbsj,'%Y')>=#{sj}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and 　date_format(t.dbsj,'%Y-%m-%d')&gt;=#{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and date_format(t.dbsj,'%Y-%m-%d')&lt;=#{endDate}
+            </if>
+        </where>
+        group by t.qxdm
+        ORDER BY t.qxdm
+    </select>
+
+    <select id="geBrokenLinetData" resultType="java.util.Map">
+        SELECT SUM(a.counts) counts,a.sj from (
+        select count(distinct ywh) counts,TO_CHAR(t.DBSJ,'yyyy-MM') sj
+        from hjpt_data.MV_TJ_SLSXYB t
+        <where>
+            t.DBSJ is not NULL
+            <if test="djdl != null and djdl != '' and (djdl==100 || djdl==200 || djdl==300 || djdl==500)">
+                and t.tjfl ='产权类' and t.djdl =#{djdl
+            </if>
+            <if test="djdl != null and djdl != '' and (djdl==400 || djdl==600)">
+                and t.djdl =#{djdl}
+            </if>
+            <if test="djdl != null and djdl != '' and djdl==700">
+                and t.tjfl like '%预告%' and t.djdl ='700'
+            </if>
+            <if test="djdl != null and djdl != '' and djdl==800">
+                and t.tjfl in ('查封类','解封类')
+            </if>
+            <if test="djdl != null and djdl != '' and djdl==900">
+                and t.tjfl ='抵押类'
+            </if>
+            <if test="djdl != null and djdl != '' and djdl==1000">
+                and t.tjfl ='行政限制类'
+            </if>
+
+            <if test="djdl != null and djdl != '' and djdl==2000">
+                and t.tjfl ='地役权登记类'
+            </if>
+            <if test="sj != null and sj != '' and sj !=-1">
+                and to_char(t.dbsj,'yyyy')=#{sj}
+            </if>
+            <choose>
+                <when test="qxdm != null and qxdm != '' and qxdm !=-1">
+                    and t.qxdm=#{qxdm}
+                </when>
+                <otherwise>
+                    AND SUBSTR(t.qxdm,0,4)=#{qxdmTemp}
+                </otherwise>
+            </choose>
+        </where>
+        group by t.qxdm,date_format(t.dbsj,'%Y-%m-%d')
+        ) a GROUP BY a.sj  ORDER BY a.sj
+    </select>
+
+    <select id="getCakeshapeData" resultType="java.util.Map">
+        select '首次登记' "name",ifnull(SUM (y.value),0) AS "value" from (
+        select count(distinct ywh) as value
+        from MV_TJ_SLSXYB t
+        <where>
+            t.tjfl ='产权类' and t.djdl ='100' and t.DBSJ is not NULL AND t.DJDL is not NULL
+            <if test="sj != null and sj != '' and sj !=-1">
+                and date_format(t.dbsj,'%Y')>= #{sj}
+            </if>
+            <choose>
+                <when test="qxdm != null and qxdm != '' and qxdm !=-1">
+                    and t.qxdm=#{qxdm}
+                </when>
+                <otherwise>
+                    AND SUBSTR(t.qxdm,0,4)=#{qxdmTemp}
+                </otherwise>
+            </choose>
+        </where>
+        group by t.qxdm
+        ) y
+        union all
+        select '转移登记' "name",ifnull(SUM (y.value),0) AS "value" from (
+        select count(distinct ywh) as value
+        from MV_TJ_SLSXYB t
+        <where>t.tjfl ='产权类' and t.djdl ='200' and t.DBSJ is not NULL AND t.DJDL is not NULL
+            <if test="
+                sj != null and sj != '' and sj !=-1">
+                and date_format(t.dbsj,'%Y')>=#{sj}
+            </if>
+            <choose>
+                <when test="qxdm != null and qxdm != '' and qxdm !=-1">
+                    and t.qxdm=#{qxdm}
+                </when>
+                <otherwise>
+                    AND SUBSTR(t.qxdm,0,4)=#{qxdmTemp}
+                </otherwise>
+            </choose>
+        </where>
+        group by qxdm
+        ) y
+        union all
+        select '变更登记' "name",ifnull(SUM (y.value),0) AS "value" from (
+        select count(distinct ywh) as value
+        from MV_TJ_SLSXYB t
+        <where>t.tjfl ='产权类' and t.djdl ='300' and t.DBSJ is not NULL AND t.DJDL is not NULL
+            <if test="
+                    sj != null and sj != '' and sj !=-1">
+                and  date_format(t.dbsj,'%Y')>=#{sj}
+            </if>
+            <choose>
+                <when test="qxdm != null and qxdm != '' and qxdm !=-1">
+                    and t.qxdm=#{qxdm,jdbcType=VARCHAR}
+                </when>
+                <otherwise>
+                    AND SUBSTR(t.qxdm,0,4)=#{qxdmTemp,jdbcType=VARCHAR}
+                </otherwise>
+            </choose>
+        </where>
+        group by qxdm
+        ) y
+        union all
+        select '更正登记' "name",ifnull(SUM (y.value),0) AS "value" from (
+        select count(distinct ywh) as value
+        from MV_TJ_SLSXYB t
+        <where>
+            t.tjfl ='产权类' and t.djdl ='500' and t.DBSJ is not NULL AND t.DJDL is not NULL
+            <if test="sj != null and sj != '' and sj !=-1">
+                and  date_format(t.dbsj,'%Y')>=#{sj}
+            </if>
+            <choose>
+                <when test="qxdm != null and qxdm != '' and qxdm !=-1">
+                    and t.qxdm=#{qxdm}
+                </when>
+                <otherwise>
+                    AND SUBSTR(t.qxdm,0,4)=#{qxdmTemp}
+                </otherwise>
+            </choose>
+        </where>
+        group by qxdm
+        ) y
+        union all
+        select '预告登记' "name",ifnull(SUM (y.value),0) AS "value" from (
+        select count(distinct ywh) as value
+        from .MV_TJ_SLSXYB t
+        <where>
+            instr(t.tjfl,'预告')>0 and t.djdl ='700' and t.DBSJ is not NULL AND t.DJDL is not NULL
+            <if test="sj != null and sj != '' and sj !=-1">
+                and  date_format(t.dbsj,'%Y')>=#{sj,jdbcType=VARCHAR}
+            </if>
+            <choose>
+                <when test="qxdm != null and qxdm != '' and qxdm !=-1">
+                    and t.qxdm=#{qxdm,jdbcType=VARCHAR}
+                </when>
+                <otherwise>
+                    AND SUBSTR(t.qxdm,0,4)=#{qxdmTemp,jdbcType=VARCHAR}
+                </otherwise>
+            </choose>
+        </where>
+        group by qxdm
+        ) y
+        union all
+        select '查封登记' "name",ifnull(SUM (y.value),0) AS "value" from (
+        select count(distinct ywh) as value
+        from MV_TJ_SLSXYB t
+        <where>
+            t.tjfl in ('查封类','解封类') and t.DBSJ is not NULL AND t.DJDL is not NULL
+            <if test="sj != null and sj != '' and sj !=-1">
+                and  date_format(t.dbsj,'%Y')>=#{sj,jdbcType=VARCHAR}
+            </if>
+            <choose>
+                <when test="qxdm != null and qxdm != '' and qxdm !=-1">
+                    and t.qxdm=#{qxdm,jdbcType=VARCHAR}
+                </when>
+                <otherwise>
+                    AND SUBSTR(t.qxdm,0,4)=#{qxdmTemp,jdbcType=VARCHAR}
+                </otherwise>
+            </choose>
+        </where>
+        group by qxdm
+        ) y
+        union all
+        select '限制登记' "name",ifnull(SUM (y.value),0) AS "value" from (
+        select count(distinct ywh) as value
+        from MV_TJ_SLSXYB t
+        <where>
+            t.tjfl ='行政限制类' and t.DBSJ is not NULL AND t.DJDL is not NULL
+            <if test="sj != null and sj != '' and sj !=-1">
+                and  date_format(t.dbsj,'%Y')>=#{sj,jdbcType=VARCHAR}
+            </if>
+            <choose>
+                <when test="qxdm != null and qxdm != '' and qxdm !=-1">
+                    and t.qxdm=#{qxdm,jdbcType=VARCHAR}
+                </when>
+                <otherwise>
+                    AND SUBSTR(t.qxdm,0,4)=#{qxdmTemp,jdbcType=VARCHAR}
+                </otherwise>
+            </choose>
+        </where>
+        group by qxdm
+        ) y
+        union all
+        select '抵押登记' "name",ifnull(SUM (y.value),0) AS "value" from (
+        select count(distinct ywh) as value
+        from MV_TJ_SLSXYB t
+        <where>
+            t.tjfl ='抵押类' and t.DBSJ is not NULL AND t.DJDL is not NULL
+            <if test="sj != null and sj != '' and sj !=-1">
+                and to_char(t.dbsj,'yyyy')>=#{sj,jdbcType=VARCHAR}
+            </if>
+            <choose>
+                <when test="qxdm != null and qxdm != '' and qxdm !=-1">
+                    and t.qxdm=#{qxdm,jdbcType=VARCHAR}
+                </when>
+                <otherwise>
+                    AND SUBSTR(t.qxdm,0,4)=#{qxdmTemp,jdbcType=VARCHAR}
+                </otherwise>
+            </choose>
+        </where>
+        group by qxdm
+        ) y
+        union all
+        select '地役登记' "name",ifnull(SUM (y.value),0) AS "value" from (
+        select count(distinct ywh) as value
+        from MV_TJ_SLSXYB t
+        <where>
+            t.tjfl ='地役权登记类' and t.DBSJ is not NULL AND t.DJDL is not NULL
+            <if test="sj != null and sj != '' and sj !=-1">
+                and  date_format(t.dbsj,'%Y')>=#{sj,jdbcType=VARCHAR}
+            </if>
+            <choose>
+                <when test="qxdm != null and qxdm != '' and qxdm !=-1">
+                    and t.qxdm=#{qxdm,jdbcType=VARCHAR}
+                </when>
+                <otherwise>
+                    AND SUBSTR(t.qxdm,0,4)=#{qxdmTemp,jdbcType=VARCHAR}
+                </otherwise>
+            </choose>
+        </where>
+        group by qxdm
+        ) y
+    </select>
+
+    <select id="getMapBjlData" resultType="java.util.Map">
+        select count( t.ywh) as "value" ,t.qxdm as "qxdm",qxdm as "name" from MV_TJ_SLSXYB t
+        <where>
+            SUBSTR(t.qxdm,0,4)=#{qxdmTemp,jdbcType=VARCHAR}
+            <if test="sj != null and sj != '' and sj !=-1">
+                AND t date_format(t.dbsj,'%Y')>=#{sj,jdbcType=VARCHAR}
+            </if>
+        </where>
+        group by qxdm
+        ORDER BY count(distinct ywh) DESC
+    </select>
+
+    <select id="getMapZslData" resultType="java.util.Map">
+        SELECT count(distinct a.fzgbh) as "value" ,t.qxdm as "qxdm",getareaname(t.qxdm) as "name" FROM
+        MV_TJ_SLSXYB t
+        INNER JOIN djfz_cqzs a ON a.ywh = t.ywh and a.qxdm=t.qxdm
+        <where>
+            SUBSTR(t.qxdm,0,4)=#{qxdmTemp,jdbcType=VARCHAR}
+            <if test="sj != null and sj != '' and sj !=-1">
+                AND date_format(t.dbsj,'%Y')>=#{sj,jdbcType=VARCHAR}
+            </if>
+        </where>
+        group by t.qxdm
+        ORDER BY count(distinct a.fzgbh) DESC
+    </select>
+
+    <select id="getMapZmlData" resultType="java.util.Map">
+        SELECT count(distinct a.fzgbh)as "value" ,t.qxdm as "qxdm",getareaname(t.qxdm) as "name" FROM
+        MV_TJ_SLSXYB t
+        INNER JOIN djfz_djzm a ON a.ywh = t.ywh and a.qxdm=t.qxdm
+        <where>
+            SUBSTR(t.qxdm,0,4)=#{qxdmTemp,jdbcType=VARCHAR}
+            <if test="sj != null and sj != '' and sj !=-1">
+                AND  date_format(t.dbsj,'%Y')>=#{sj,jdbcType=VARCHAR}
+            </if>
+        </where>
+        group by t.qxdm
+        ORDER BY count(distinct a.fzgbh) DESC
+    </select>
+
+    <select id="countDataTotal" resultType="java.lang.Integer">
+        select sum(counts) from (select count( ywh) counts,qxdm from MV_TJ_SLSXYB group by qxdm) as a
+    </select>
+
+    <select id="countDataByDyaq" resultType="java.lang.Integer">
+        select sum(counts) from (select count(ywh) counts,qxdm from MV_TJ_SLSXYB t where t.tjfl ='抵押类' group by qxdm) as a
+    </select>
+
+    <select id="countDataByCfdj" resultType="java.lang.Integer">
+        select sum(counts) from (select count(ywh) counts,qxdm from MV_TJ_SLSXYB t where t.tjfl ='查封类' group by qxdm) as a
+    </select>
+
+    <select id="countDataByZxdj" resultType="java.lang.Integer">
+        select sum(counts) from (select count(ywh) counts,qxdm from MV_TJ_SLSXYB t where t.djdl='400' group by qxdm) as a
+    </select>
+
+    <select id="countDataByArea" resultType="com.bdc.dao.req.BdtjReq">
+         select 所属区县 as qxdm ,汇聚总量 counts,抵押权 dyaq, 查封登记 cfdj,预告登记 ygdj,
+         首次登记 scdj,转移登记 zydj,注销登记 zxdj from(
+        select  '总数据' 所属区县,
+        (
+        select count(1) counts from MV_TJ_SLSXYB  t
+        <where>
+            <if test='start != null and start != "" and start !="-1" '>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+            </if>
+        </where>
+        )  汇聚总量,
+        (select count(1) counts from MV_TJ_SLSXYB  t
+        <where>
+            t.tjfl ='产权类' and t.djdl ='100'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+             </if>
+        </where>
+        ) 首次登记,
+        (select count(1) counts from MV_TJ_SLSXYB  t
+        <where>
+            t.tjfl ='产权类' and t.djdl ='200'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+            </if>
+        </where>
+         )  转移登记,
+        (select count(1) counts from MV_TJ_SLSXYB  t
+        <where>
+             t.tjfl ='产权类' and t.djdl ='300'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+            </if>
+        </where>
+         )  变更登记,
+        (select count(1) counts from MV_TJ_SLSXYB  t
+        <where>
+            t.djdl ='400'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+            </if>
+        </where>
+           )  注销登记,
+        (select count(1) counts from MV_TJ_SLSXYB  t
+        <where>
+            t.tjfl ='产权类' and t.djdl ='500'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+            </if>
+        </where>
+          )  更正登记,
+        (select count(1) counts from MV_TJ_SLSXYB  t
+        <where>
+            t.djdl ='600'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+            </if>
+        </where>
+           )  异议登记,
+        (select count(1) counts from MV_TJ_SLSXYB  t
+        <where>
+            t.tjfl like '%预告%' and t.djdl ='700'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+            </if>
+        </where>
+           )  预告登记,
+        (select count(1) counts from MV_TJ_SLSXYB  t
+        <where>
+            t.tjfl in ('查封类','解封类')
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+            </if>
+        </where>
+          )  查封登记,
+        (select count(1) counts from MV_TJ_SLSXYB  t
+        <where>
+            t.tjfl ='行政限制类'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+            </if>
+        </where>
+         )  限制登记,
+        (select count(1) counts from MV_TJ_SLSXYB  t
+        <where>
+            t.tjfl ='抵押类'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+            </if>
+        </where>
+           )  抵押权,
+        (select count(1) counts from MV_TJ_SLSXYB  t
+        <where>
+            t.tjfl ='地役权登记类'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%m-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%m-%d')
+            </if>
+        </where>
+         )  地役权
+        from dual
+        union all
+        select '北京'  所属区县,
+        (41)  汇聚总量,
+        (5)  首次登记,
+        (9 )  转移登记,
+        (10)  变更登记,
+        (2)  注销登记,
+        (3)  更正登记,
+        (1)  异议登记,
+        (4)  预告登记,
+        (3)  查封登记,
+        (2)  限制登记,
+        (1)  抵押权,
+        (1)  地役权
+        from dual
+        union all
+        select '上海'  所属区县,
+        (28)  汇聚总量,
+        (5)  首次登记,
+        (4 )  转移登记,
+        (3)  变更登记,
+        (1)  注销登记,
+        (3)  更正登记,
+        (1)  异议登记,
+        (4)  预告登记,
+        (3)  查封登记,
+        (2)  限制登记,
+        (1)  抵押权,
+        (1)  地役权
+        from dual
+
+        union all
+        select '深圳'  所属区县,
+        (36)  汇聚总量,
+        (4)  首次登记,
+        (6)  转移登记,
+        (5)  变更登记,
+        (4)  注销登记,
+        (1)  更正登记,
+        (4)  异议登记,
+        (2)  预告登记,
+        (1)  查封登记,
+        (4)  限制登记,
+        (2)  抵押权,
+        (3)  地役权
+        from dual
+        union all
+        select '成都'  所属区县,
+        (37)  汇聚总量,
+        (8)  首次登记,
+        (2)  转移登记,
+        (3)  变更登记,
+        (6)  注销登记,
+        (2)  更正登记,
+        (3)  异议登记,
+        (3)  预告登记,
+        (2)  查封登记,
+        (1)  限制登记,
+        (5)  抵押权,
+        (3)  地役权
+        from dual
+
+        union all
+        select '杭州'  所属区县,
+        (48)  汇聚总量,
+        (10)  首次登记,
+        (5)  转移登记,
+        (5)  变更登记,
+        (4)  注销登记,
+        (4)  更正登记,
+        (2)  异议登记,
+        (2)  预告登记,
+        (6)  查封登记,
+        (4)  限制登记,
+        (3)  抵押权,
+        (5)  地役权
+        from dual
+        ) as a
+
+
+    </select>
+
+    <select id="countDataByWeeks" resultType="com.bdc.dao.req.BdtjReq">
+        select  date_format(crsj,'%M-%d') sj,count(1) counts from MV_TJ_SLSXYB  t where  crsj>sysdate()-30 group by to_char(crsj,'mm-dd') order by  sj
+    </select>
+
+    <select id="countDataByMouth" resultType="com.bdc.dao.req.BdtjReq">
+        select sj,counts from (
+        select * from(
+        (      select ym.year_month as sj from year_month_view ym group by ym.year_month
+        ) mouth)
+        left join
+        (
+        select date_format(crsj,'%Y-%m') monthlist,count(1) counts
+        from MV_TJ_SLSXYB  t
+        where  crsj>str_to_date('2019','%Y')
+        group by date_format(crsj,'%Y-%m')
+        ) coun
+        on mouth.sj=coun.monthlist
+        ) as a
+        order by sj
+
+    </select>
+
+
+
+    <select id="countDataByDays" resultType="com.bdc.dao.req.BdtjReq">
+       select * from (
+         select  date_format(crsj,'%m-%d') as sj,count(1) as counts from mv_tj_slsxyb where crsj between curdate() -31 and curdate()
+         group by crsj order by crsj ) as  a
+    </select>
+
+    <select id="getPieCounts" resultType="com.bdc.dao.req.BdtjReq">
+        --汇聚情况统计
+        select getareaname(qxdm) qxdm,汇聚总量 counts,抵押权 dyaq, 查封登记 cfdj,预告登记 ygdj,
+        首次登记 scdj,转移登记 zydj,注销登记 zxdj from(
+        select qxdm,count(1) counts,'转移登记' djlx from MV_TJ_SLSXYB
+        <where>
+            tjfl ='产权类' and djdl ='200'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%M-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%M-%d')
+            </if>
+        </where>
+        group by qxdm
+        union all
+        --变更登记
+        select qxdm,count(1) counts ,'变更登记' djlx from MV_TJ_SLSXYB
+        <where>
+            tjfl ='产权类' and djdl ='300'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%M-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%M-%d')
+            </if>
+        </where>
+        group by qxdm
+        union all
+        --注销登记（含产权注销、抵押注销、预告注销等）
+        select  qxdm,count(1) counts  ,'注销登记' djlx from MV_TJ_SLSXYB
+        <where>
+            djdl ='400'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%M-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%M-%d')
+            </if>
+        </where>
+        group by qxdm
+        union all
+        --更正登记
+        select qxdm,count(1) counts,'更正登记' djlx from MV_TJ_SLSXYB
+        <where>
+            tjfl ='产权类' and djdl ='500'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%M-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%M-%d')
+            </if>
+        </where>
+        group by qxdm
+        union all
+        --异议登记
+        select qxdm,count(1) counts,'异议登记' djlx  from MV_TJ_SLSXYB
+        <where>
+            djdl ='600'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%M-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%M-%d')
+            </if>
+        </where>
+        group by qxdm
+        union all
+        --预告登记
+        select qxdm,count(1) counts,'预告登记' djlx  from MV_TJ_SLSXYB
+        <where>
+            tjfl like '%预告%' and djdl ='700'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%M-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%M-%d')
+            </if>
+        </where>
+        group by qxdm
+        union all
+        --查封登记
+        select qxdm,count(1) counts,'查封登记' djlx  from MV_TJ_SLSXYB
+        <where>
+            tjfl in ('查封类','解封类')
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%M-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%M-%d')
+            </if>
+        </where>
+        group by qxdm
+        union all
+        --限制登记
+        select qxdm,count(1) counts,'限制登记' djlx  from MV_TJ_SLSXYB
+        <where>
+            tjfl ='行政限制类'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%M-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%M-%d')
+            </if>
+        </where>
+        group by qxdm
+        union all
+        --抵押权
+        select qxdm,count(1) counts,'抵押权' djlx  from MV_TJ_SLSXYB
+        <where>
+            tjfl ='抵押类'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%M-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%M-%d')
+            </if>
+        </where>
+        group by qxdm
+        union all
+        --地役权
+        select qxdm,count(1) counts,'地役权' djlx   from MV_TJ_SLSXYB
+        <where>
+            tjfl ='地役权登记类'
+            <if test='start != null and start != "" and start !="-1"'>
+                AND crsj &gt;= str_to_date(#{start},'%Y-%M-%d')
+                and crsj &lt;= str_to_date(#{end},'%Y-%M-%d')
+            </if>
+        </where>
+        group by qxdm
+        )
+        pivot
+        (   max(counts)  for
+        djlx  in ('汇聚总量' as 汇聚总量,'首次登记' as 首次登记 ,'转移登记' as 转移登记,'变更登记' 变更登记,'注销登记' 注销登记,
+        '更正登记' 更正登记,'异议登记' 异议登记,'预告登记' 预告登记,'查封登记' 查封登记,'限制登记' 限制登记,'抵押权' as 抵押权,
+        '地役权' as 地役权)
+        )
+        ) order by 汇聚总量 desc
+
+
+    </select>
+
+</mapper>

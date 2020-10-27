@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="head"></div>
+    <title>完整demo</title>
+    <style type="text/css">
+        div{
+            width:100%;
+        }
+    </style>
+</head>
+<body>
+<script id="container" name="content" type="text/plain"></script>
+
+<!-- 百度编辑器配置文件 -->
+<script type="text/javascript" th:src="@{/ueditor/ueditor.config.js}"></script>
+<!-- 百度编辑器编辑器源码文件 -->
+<script type="text/javascript" th:src="@{/ueditor/ueditor.all.js}"></script>
+<script type="text/javascript" th:src="@{/ueditor/lang/zh-cn/zh-cn.js}"></script>
+<!-- 实例化编辑器 -->
+<script type="text/javascript">
+    var ue = UE.getEditor('container');
+</script>
+</body>
+</html>

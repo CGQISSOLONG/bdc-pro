@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="head"></div>
+    <link rel="stylesheet" th:href="@{/plugins/datatables/dataTables.bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{/layer/layui/css/layui.css}"/>
+    <script th:src="@{/layer/layui/layui.all.js}"></script>
+    <title>字典管理</title>
+    <style type="text/css">
+        .table-striped
+        td {
+            text-align: center;
+        }
+
+        th {
+            text-align: center;
+        }
+    </style>
+</head>
+<script type="text/javascript">
+    function check() {
+        var r = confirm("确定要删除吗？");
+        if (r == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
+
+<body class="hold-transition skin-blue sidebar-mini ">
+<div class="wrapper">
+    <div th:replace="header"></div>
+    <div th:replace="sidebar"></div>
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <a th:href="@{/dict/form}" title="新增字典"><span class="glyphicon glyphicon-plus"></span></a>
+                        </div>
+                        <div class="box-body">
+                           <!-- <div class="col-xs-6" style="float: right">
+                                <label style="font-weight: normal;text-align: left;white-space: nowrap;">账号名 ：
+                                    <input class="" placeholder="请输入账号" type="text" name="account" id="account">
+                                </label>
+                                <button class="" id="serchbtn">
+                                    <i class="fa fa-search">&nbsp;&nbsp;查&nbsp;&nbsp;询&nbsp;&nbsp;</i>
+                                </button>
+                            </div>-->
+                            <table id="dataTable" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>字典值</th>
+                                    <th>字典名</th>
+                                    <th>类型</th>
+                                    <th>状态</th>
+                                    <th>创建时间</th>
+                                    <th>备注</th>
+                                    <th>排序</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!--<div th:replace="footer"></div>-->
+</div>
+
+<div th:replace="script"></div>
+
+<!-- page script -->
+<script>
+    $(function () {
+        var ctxPath = '[[@{/}]]';
+        var table = $('#dataTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching": false,//自定义搜索
+            "language": {
+                "sProcessing": "加载中...",
+                "sLengthMenu": "显示 _MENU_ 项结果",
+                "sZeroRecords": "没有匹配结果",
+                "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                "sInfoPostFix": "",
+                "sSearch": "搜索:",
+                "sUrl": "",
+                "sEmptyTable": "暂无数据",
+                "sLoadingRecords": "载入中...",
+                "sInfoThousands": ",",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "末页"
+                }
+            },
+            "ajax": {
+                "url": "[[@{${api}}]]",
+                "type": "POST"
+            },
+            "columns": [
+                {"data": "value"},
+                {"data": "label"},
+                {"data": "type"},
+                {"data": "delFlag"},
+                {"data": "createDate"},
+                {"data": "remarks"},
+                {"data": "sort"},
+                {"data": null}
+            ],
+            "columnDefs": [{
+                "targets": 3,
+                "render": function (data, type, row, meta) {
+                    if (data == 0) {
+                        return '启用';
+                    } else {
+                        return '禁用';
+                    }
+                }
+            },{
+                "targets": 7,
+                "searchable": false,
+                "render": function (data, type, row, meta) {
+                    var id = data.id;
+                    var status = data.delFlag==0?1:0;
+                    return "<a href='" + ctxPath + "dict/form?dictId=" + data.id + "'><span " +
+                    "class='glyphicon glyphicon-edit' title='编辑'></span></a>"+
+                    "<span name='lock'   style='cursor: pointer;margin-left: 10px;' title='切换状态' " +
+                    "data='" + ctxPath + "dict/togglestatus?status=" + status + "&dictId=" + id + "' " +
+                    "class='glyphicon glyphicon-lock'></span>"+
+                    " <span name='trash' title='删除'  data='" + ctxPath + "dict/"+id+"/delete'" +
+                        " style='cursor: pointer;margin-left: 5px;' class='glyphicon glyphicon-trash'></span>";
+                }
+            }],
+        });
+    });
+</script>
+<script th:src="@{/js/server-page.js}"></script>
+</body>
+</html>

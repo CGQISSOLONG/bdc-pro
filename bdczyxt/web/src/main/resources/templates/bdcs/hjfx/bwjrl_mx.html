@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>纳入统计的报文接入量明细</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <script th:src="@{/bdcxt/js/jquery.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/bdcs/layui/css/layui.css}"  media="all"/>
+</head>
+<style>
+    .layui-table-tool-self {
+        position: absolute;
+        left: 5px;
+        top: 10px;
+        float: left;
+    }
+     .layui-table,.layui-table-view{margin:0px 0}
+
+</style>
+<body>
+<div style="position: absolute;z-index: 1000001;margin-top: 15px;margin-left: 1120px;">
+    <button class="layui-btn" id="export">
+        <i class="iconfont icon-export"></i> 导出excel
+    </button>
+</div>
+<table id="bwjrl_mx" lay-filter="bwjrlMxfilter"></table>
+<script th:src="@{/bdcs/layui/layui.all.js}"></script>
+<script>
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    layui.use('table', function(){
+        var table = layui.table;
+        var ins=table.render({
+            title: "数据汇交一致率-报文接入时间明细",
+            elem: '#bwjrl_mx',
+            width: "100%",
+            url:ctxPath+ 'hjfx/getBwjrlMx?sj=[[${sj}]]&qxdm=[[${qxdm}]]',
+            toolbar:true,
+            method:'post',
+            response: {statusCode: 200},
+            page: true,
+            defaultToolbar: [{
+                title: '返回',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-left'
+            }],
+            limit: 10,
+            limits:[10,20,30,40],
+            cols: [
+                [
+                    {field:'xuhao',align:"center",width:80, title: '序号',fixed: 'left'},
+                    {field: "qxdm",align:"center", title: "行政区划代码", width:120,rowspan:2},
+                    {field: "bwId", align:"center", title: "报文ID", width:200,rowspan:2,templet:function (d) {
+                            return d.bwId + '\t';
+                        }} ,
+                    {field: "jrywbm", align:"center", title: "接入业务编码", width:170,rowspan:2},
+                    {field: "djdl",align:"center",  title: "登记大类", width:150,rowspan:2},
+                    {field: "ywh", align:"center", title: "业务号", width:180,rowspan:2},
+                    {field: "dbsj", align:"center", title: "登薄时间", width:200,rowspan:2},
+                    {field: "bwjssj", align:"center", title: "报文接收时间", width:200,rowspan:2}
+                    /*{fixed: 'right', width: 165, align:'center',title: "操作", toolbar: '#toolbarDemo'}*/
+                ]
+            ]
+        });
+        $("#export").click(function () {
+            $.ajax({
+                type: "get",
+                url: ctxPath+'hjfx/geBwjrlMxAll?sj=[[${sj}]]&qxdm=[[${qxdm}]]',
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == '200') {
+                        table.exportFile(ins.config.id, result.data, 'xls');
+                    } else {
+                        lay_win("导出失败，请重试！！！")
+                    }
+
+                },
+                error: function (errorMsg) {
+                    lay_win("导出失败，请重试！！！")
+                }
+            });
+        });
+
+        //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('toolbar(bwjrlMxfilter)', function (obj) {
+            //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var layEvent = obj.event;
+            if (layEvent === 'LAYTABLE_TIPS') {
+                //layer.alert('Hi，头部工具栏扩展的右侧图标。');
+                window.location.href = ctxPath + 'hjyzrate?sj=[[${sj}]]';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
